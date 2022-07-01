@@ -1,3 +1,6 @@
+/*
+ * Copyright 2022 ruitianzhong
+ */
 package top.zhongruitian.ServerWithNetty.handlers;
 
 import io.netty.buffer.ByteBuf;
@@ -15,6 +18,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+/**
+ * @author ruitianzhong
+ * @email zhongruitian2003@qq.com
+ * @date 2022/7/1 20:28
+ * @description
+ */
 public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     public static ByteBuf DefaultNotFoundText = Unpooled.copiedBuffer("<html><head><title>404 Not Found</title></head><body><h1>404 Not Found.</h1></body></html>".getBytes(CharsetUtil.UTF_8));

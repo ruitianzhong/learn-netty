@@ -42,6 +42,6 @@ public class FirstHandler extends ChannelInboundHandlerAdapter {
          byteBuf.writeInt(random.nextInt());
          }//Just to show how to use the API of ByteBuf...
          */
-        assert byteBuf.readerIndex()==byteBuf.writerIndex();
+        assert byteBuf.readerIndex() == byteBuf.writerIndex();
     }
 }

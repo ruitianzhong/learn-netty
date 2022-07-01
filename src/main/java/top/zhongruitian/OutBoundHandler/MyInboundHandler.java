@@ -8,9 +8,9 @@ import io.netty.util.CharsetUtil;
 public class MyInboundHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf byteBuf = (ByteBuf) msg ;
+        ByteBuf byteBuf = (ByteBuf) msg;
         String s = ((ByteBuf) msg).toString(CharsetUtil.UTF_8);
-        System.out.println("Reading in ChannelInboundHandler "+ s);
+        System.out.println("Reading in ChannelInboundHandler " + s);
         ctx.writeAndFlush(s);
 
     }

@@ -10,15 +10,16 @@ public class ClientSendInteger extends ClientWithoutNetty {
         byte[] bytes = new byte[4];
 
         for (int i = 0; i < 10; i++) {
-            IntegerToByte(i,bytes);
+            IntegerToByte(i, bytes);
             outputStream.write(bytes);
         }
-        while (true){
+        while (true) {
 
         }
     }
-    public static byte [] IntegerToByte(int integer,byte []bytes){
-        if(bytes.length!=4){
+
+    public static byte[] IntegerToByte(int integer, byte[] bytes) {
+        if (bytes.length != 4) {
             throw new IllegalArgumentException("the length of bytes array is not 4.");
         }
         bytes[0] = (byte) (integer >> 24);

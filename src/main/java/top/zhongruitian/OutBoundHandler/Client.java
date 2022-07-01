@@ -9,7 +9,7 @@ public class Client extends ClientWithoutNetty {
     public static void main(String[] args) throws IOException {
         createSocket();
         outputStream.write("Hello.html world!".getBytes(StandardCharsets.UTF_8));
-        while(true){
+        while (true) {
 
         }
 
