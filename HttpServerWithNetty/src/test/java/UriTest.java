@@ -1,5 +1,5 @@
-import top.zhongruitian.ServerWithNetty.Utils.Utils;
 import org.junit.Test;
+import top.zhongruitian.ServerWithNetty.Utils.Utils;
 
 import java.net.URI;
 import java.net.URISyntaxException;

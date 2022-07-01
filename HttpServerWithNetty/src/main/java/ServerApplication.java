@@ -1,5 +1,5 @@
-import top.zhongruitian.ServerWithNetty.handlers.HttpChannelHandlerInitializer;
 import top.zhongruitian.ServerWithNetty.Utils.Server;
+import top.zhongruitian.ServerWithNetty.handlers.HttpChannelHandlerInitializer;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

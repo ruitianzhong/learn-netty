@@ -1,6 +1,6 @@
 package top.zhongruitian.ServerWithNetty.exceptions;
 
-public class BadRequestException extends ServerException{
+public class BadRequestException extends ServerException {
 
     public BadRequestException(String message) {
         super(message);

@@ -1,6 +1,5 @@
 package top.zhongruitian.ServerWithNetty.handlers;
 
-import top.zhongruitian.ServerWithNetty.Utils.Utils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
@@ -8,6 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
+import top.zhongruitian.ServerWithNetty.Utils.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;

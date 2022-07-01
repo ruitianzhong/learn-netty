@@ -6,7 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class Server {
-    private ChannelHandler [] handlers;
+    private ChannelHandler[] handlers;
     private int port = 8080;
     private ChannelInitializer<Channel> channelInitializer;
 
