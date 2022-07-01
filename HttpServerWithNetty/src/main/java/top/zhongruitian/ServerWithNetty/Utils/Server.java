@@ -23,6 +23,10 @@ public class Server {
     public Server(ChannelInitializer channelInitializer) {
         this.channelInitializer = channelInitializer;
     }
+    public Server(ChannelInitializer channelInitializer ,int port){
+        this.port=port;
+        this.channelInitializer=channelInitializer;
+    }
 
     public void run() {
         EventLoopGroup workerLoop = new NioEventLoopGroup(), bossLoop = new NioEventLoopGroup();
