@@ -2,7 +2,7 @@
  * Copyright 2022 ruitianzhong
  */
 
-import EncoderAndDecoder.IntegerToStringDecoder;
+import top.zhongruitian.EncoderAndDecoder.IntegerToStringDecoder;
 import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.Test;
 
