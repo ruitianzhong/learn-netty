@@ -15,33 +15,36 @@ public class ContentType {
     public static final String X_ICON = "image/x-icon";
     public static final String Default_Content_Type = HTML;
 
-    public static String getContentType(String last) {
-        if (last == null) {
+    public static String getContentType(String fileName) {
+        if(fileName==null){
             return Default_Content_Type;
         }
-        if(Pattern.matches("\\w+.html",last)){
+        int lastIndexOf=fileName.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return UNKNOWN;
+        }
+        String last = fileName.substring(lastIndexOf);
+        if(last.equals(".html")){
             return ContentType.HTML;
         }
-        if (Pattern.matches("\\w+.css", last)) {
+        if (last.equals(".css")) {
 
             return ContentType.CSS;
         }
-        if (Pattern.matches("\\w+.js", last)) {
+        if (last.equals(".js")) {
             return ContentType.JS;
         }
-        if (Pattern.matches("\\w+.pdf", last)) {
+        if (last.equals(".pdf")) {
             return ContentType.PDF;
         }
-        if (Pattern.matches("\\w+.ico", last)) {
-            return ContentType.X_ICON;
-        }
-        if (Pattern.matches("\\w+.jpg", last)) {
+
+        if (last.equals(".jpg")||last.equals(".jpeg")) {
             return ContentType.JPG;
         }
-        if (Pattern.matches("\\w+.png", last)) {
+        if (last.equals(".png")) {
             return ContentType.PNG;
         }
-        if (Pattern.matches("\\w+.xml", last)) {
+        if (last.equals(".xml")) {
             return ContentType.XML;
         }
 

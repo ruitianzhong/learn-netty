@@ -13,19 +13,21 @@ public class RegExTest {
 
     @Test
     public void RegularExpressionTest() {
-        String css = "test.css",
+        String css = "semantic.min.css",
                 html = "test.html",
                 js = "vue.js",
-                x_icon = "favicon.ico",
                 pdf = "pdf.pdf",
                 jpg = "hello.jpg",
-                png = "hello.png";
+                png = "hello.png",
+                unknown = "unknown",
+                unknownExtension = "unknown.unknown";
         assertEquals(ContentType.getContentType(css), ContentType.CSS);
         assertEquals(ContentType.getContentType(html), ContentType.HTML);
         assertEquals(ContentType.getContentType(js), ContentType.JS);
-        assertEquals(ContentType.getContentType(x_icon), ContentType.X_ICON);
         assertEquals(ContentType.getContentType(pdf), ContentType.PDF);
         assertEquals(ContentType.getContentType(jpg), ContentType.JPG);
         assertEquals(ContentType.getContentType(png), ContentType.PNG);
+        assertEquals(ContentType.getContentType(unknown), ContentType.UNKNOWN);
+        assertEquals(ContentType.getContentType(unknownExtension), ContentType.UNKNOWN);
     }
 }
