@@ -10,7 +10,7 @@ import static org.junit.Assert.fail;
 
 public class UriTest {
     public static String case1 = "//";
-    public static String case2 = "///testh ";
+    public static String case2 = "/index.html ";
     public static String case3 = "/hello/world/test/abc/";
     public static String case4 = "/hello/world/test/abc";
     public static String case5 = "/abc//abc";

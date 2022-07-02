@@ -12,13 +12,11 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest fullHttpRequest) throws Exception {
-        System.out.println(fullHttpRequest.method() == HttpMethod.GET);
-        System.out.println(fullHttpRequest.uri());
         String message = "<html><head><title>test</title></head><body>Hello.html world!</body></html>";
-        HttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.copiedBuffer(message, CharsetUtil.UTF_8));
+        HttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
+                HttpResponseStatus.OK, Unpooled.copiedBuffer(message, CharsetUtil.UTF_8));
         httpResponse.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html;charset=UTF-8");
         channelHandlerContext.writeAndFlush(httpResponse).addListener(ChannelFutureListener.CLOSE);
-
     }
 
 

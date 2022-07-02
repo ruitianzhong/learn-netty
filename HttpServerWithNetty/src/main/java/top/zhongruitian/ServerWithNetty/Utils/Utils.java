@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Utils {
     public static List<String> parseURIToList(URI uri) {
+
         List<String> list = new ArrayList<>();
         String path = uri.getPath();
         StringBuffer sb = new StringBuffer();
@@ -24,7 +25,9 @@ public class Utils {
         if (!sb.isEmpty()) {
             list.add(sb.toString());
         }
+
         return list;
 
     }
+
 }

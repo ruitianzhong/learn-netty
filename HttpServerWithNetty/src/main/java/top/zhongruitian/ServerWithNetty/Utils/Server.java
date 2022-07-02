@@ -4,9 +4,14 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class Server {
+
     private ChannelHandler[] handlers;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
     private int port = 8080;
     private ChannelInitializer<Channel> channelInitializer;
 
@@ -23,18 +28,21 @@ public class Server {
     public Server(ChannelInitializer channelInitializer) {
         this.channelInitializer = channelInitializer;
     }
-    public Server(ChannelInitializer channelInitializer ,int port){
-        this.port=port;
-        this.channelInitializer=channelInitializer;
+
+    public Server(ChannelInitializer channelInitializer, int port) {
+        this.port = port;
+        this.channelInitializer = channelInitializer;
     }
 
     public void run() {
+
+        LOGGER.debug("Server start on port {}", port);
+        System.out.println("Server start on port " + port);
         EventLoopGroup workerLoop = new NioEventLoopGroup(), bossLoop = new NioEventLoopGroup();
         ServerBootstrap b = new ServerBootstrap();
         try {
 
-            b.group(bossLoop, workerLoop).channel(NioServerSocketChannel.class)
-                    .option(ChannelOption.SO_BACKLOG, 128).childOption(ChannelOption.SO_KEEPALIVE, true);
+            b.group(bossLoop, workerLoop).channel(NioServerSocketChannel.class).option(ChannelOption.SO_BACKLOG, 128).childOption(ChannelOption.SO_KEEPALIVE, true);
 
             if (channelInitializer == null) {
                 b.childHandler(new ChannelInitializer<>() {
@@ -51,6 +59,7 @@ public class Server {
             } else {
                 b.childHandler(this.channelInitializer);
             }
+            LOGGER.debug("Server starting...");
             ChannelFuture f = b.bind(this.port).sync();
             f.channel().closeFuture().sync();
 

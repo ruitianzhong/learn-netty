@@ -7,7 +7,7 @@ import java.net.URISyntaxException;
 import static java.lang.System.exit;
 
 public class ServerApplication {
-    public static int DEFAULT_PORT = 9999;
+    public static int DEFAULT_PORT = 10086;
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         if (args.length != 2) {

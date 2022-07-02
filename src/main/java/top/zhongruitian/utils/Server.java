@@ -17,7 +17,6 @@ public class Server {
     public Server(int port, ChannelHandler... channelInboundHandlerAdapters) {
         this.handlers = channelInboundHandlerAdapters;
         this.port = port;
-
     }
 
     public Server(ChannelInitializer channelInitializer) {
