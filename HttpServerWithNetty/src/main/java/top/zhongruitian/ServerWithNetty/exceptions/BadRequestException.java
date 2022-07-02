@@ -7,8 +7,6 @@ public class BadRequestException extends ServerException {
         super(message);
         this.BadRequestURI = message;
     }
-
-
     public BadRequestException(String message, Throwable throwable) {
         super(message, throwable);
     }

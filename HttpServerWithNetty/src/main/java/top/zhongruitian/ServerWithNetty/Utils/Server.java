@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 
 public class Server {
-
+    public static final String SERVER_NAME = "Http Server With Netty";
     private ChannelHandler[] handlers;
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
     private int port = 8080;

@@ -1,4 +1,9 @@
+/*
+ * Copyright 2022 ruitianzhong
+ */
 package top.zhongruitian.ServerWithNetty.Utils;
+
+import top.zhongruitian.ServerWithNetty.exceptions.BadRequestException;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -11,6 +16,9 @@ public class Utils {
         String path = uri.getPath();
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < path.length(); i++) {
+            if (path.charAt(0) != '/') {
+                throw new BadRequestException("The first character of uri is not /");
+            }
 
             char temp = path.charAt(i);
             if (temp == '/') {

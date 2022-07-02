@@ -10,6 +10,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import lombok.extern.slf4j.Slf4j;
+import top.zhongruitian.ServerWithNetty.Utils.ContentType;
+import top.zhongruitian.ServerWithNetty.Utils.Server;
 import top.zhongruitian.ServerWithNetty.Utils.Utils;
 
 import java.io.*;
@@ -28,6 +30,7 @@ import java.util.List;
 @Slf4j
 public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     private static String Default_HTML_File_Name = "index.html";
+    private static String Default_Content_Type = ContentType.HTML;
 
     public static final String DefaultNotFoundText = "<html><head><title>404 Not Found</title></head><body><h1>404 Not Found.</h1></body></html>";
 
@@ -62,39 +65,39 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
 
     private void NotFoundHandle(ChannelHandlerContext ctx) {
         ByteBuf byteBuf = Unpooled.copiedBuffer(DefaultNotFoundText.getBytes(StandardCharsets.UTF_8));
-        ctx.writeAndFlush(buildHttpResponseQuickly(HttpResponseStatus.NOT_FOUND, byteBuf))
+        ctx.writeAndFlush(buildHttpResponseQuickly(HttpResponseStatus.NOT_FOUND, byteBuf, ContentType.HTML))
                 .addListener(ChannelFutureListener.CLOSE);
     }
 
     private void InternalServerHandle(ChannelHandlerContext ctx) {
         ByteBuf byteBuf = Unpooled.copiedBuffer(DefaultInternalServerError.getBytes(StandardCharsets.UTF_8));
-        ctx.writeAndFlush(buildHttpResponseQuickly(HttpResponseStatus.INTERNAL_SERVER_ERROR, byteBuf))
+        ctx.writeAndFlush(buildHttpResponseQuickly(HttpResponseStatus.INTERNAL_SERVER_ERROR, byteBuf, ContentType.HTML))
                 .addListener(ChannelFutureListener.CLOSE);
     }
 
-    private HttpResponse buildHttpResponseQuickly(HttpResponseStatus status, ByteBuf content) {
+    private HttpResponse buildHttpResponseQuickly(HttpResponseStatus status, ByteBuf content, String contentType) {
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, content);
-        buildHttpResponseHeaders(response.headers());
+        buildHttpResponseHeaders(response.headers(), contentType);
         return response;
     }
 
-    private void buildHttpResponseHeaders(HttpHeaders headers) {
-        headers.set(HttpHeaderNames.SERVER, "Http Server With Netty");
-        headers.set(HttpHeaderNames.CONTENT_TYPE, "text/html;charset=utf-8");
+    private void buildHttpResponseHeaders(HttpHeaders headers, String contentType) {
+        headers.set(HttpHeaderNames.SERVER, Server.SERVER_NAME);
+        headers.set(HttpHeaderNames.CONTENT_TYPE, contentType);
         headers.set(HttpHeaderNames.DATE, new Date().toString());
 
     }
 
     private void responseIfExist(String uri, ChannelHandlerContext ctx, FullHttpRequest request) {
         try {
-            InputStream inputStream = getInputStream(uri);
-
+            List<String> list = Utils.parseURIToList(new URI(uri));
+            InputStream inputStream = getInputStream(list);
             if (inputStream != null) {
-
                 byte[] bytes = inputStream.readAllBytes();
                 ByteBuf byteBuf = Unpooled.copiedBuffer(bytes);
                 inputStream.close();
-                ctx.writeAndFlush(buildHttpResponseQuickly(HttpResponseStatus.OK, byteBuf))
+                ctx.writeAndFlush(buildHttpResponseQuickly(HttpResponseStatus.OK, byteBuf,
+                                ContentType.getContentType(list.size() == 0 ? null : list.get(list.size() - 1))))
                         .addListener(ChannelFutureListener.CLOSE);
                 String info = request.headers().get(HttpHeaderNames.REFERER) + " visited " + uri;
                 System.out.println(info);
@@ -115,9 +118,9 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
     }
 
 
-    private InputStream getInputStream(String uri) throws FileNotFoundException, URISyntaxException {
+    private InputStream getInputStream(List<String> list) throws FileNotFoundException, URISyntaxException {
 
-        String path = getFilteredPathName(Utils.parseURIToList(new URI(uri)));
+        String path = getFilteredPathName(list);
 
         File file = getResource(path);
 
