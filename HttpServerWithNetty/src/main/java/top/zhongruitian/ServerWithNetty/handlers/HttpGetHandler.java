@@ -87,7 +87,6 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
 
     private void responseIfExist(String uri, ChannelHandlerContext ctx, FullHttpRequest request) {
         try {
-
             InputStream inputStream = getInputStream(uri);
 
             if (inputStream != null) {
@@ -125,7 +124,7 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
         if (file != null && file.exists() && file.isFile()) {
             return new FileInputStream(file);
         }
-        return this.getClass().getClassLoader().getResourceAsStream(STATIC_DIRECTORY_NAME + "Hello.html");
+        return this.getClass().getClassLoader().getResourceAsStream(STATIC_DIRECTORY_NAME + "hello.html");
     }
 
 
