@@ -3,7 +3,7 @@ package top.zhongruitian.ServerWithNetty.Utils;
 import java.util.regex.Pattern;
 
 public class ContentType {
-
+  public static  final  String UNKNOWN ="UNKNOWN";
     public static final String HTML = "text/html;charset=utf-8";
     public static final String CSS = "text/css";
     public static final String JS = "application/javascript";
@@ -19,8 +19,8 @@ public class ContentType {
         if (last == null) {
             return Default_Content_Type;
         }
-        if (Pattern.matches("\\w+.pdf", last)) {
-            return ContentType.PDF;
+        if(Pattern.matches("\\w+.html",last)){
+            return ContentType.HTML;
         }
         if (Pattern.matches("\\w+.css", last)) {
 
@@ -28,6 +28,9 @@ public class ContentType {
         }
         if (Pattern.matches("\\w+.js", last)) {
             return ContentType.JS;
+        }
+        if (Pattern.matches("\\w+.pdf", last)) {
+            return ContentType.PDF;
         }
         if (Pattern.matches("\\w+.ico", last)) {
             return ContentType.X_ICON;
@@ -41,6 +44,7 @@ public class ContentType {
         if (Pattern.matches("\\w+.xml", last)) {
             return ContentType.XML;
         }
-        return Default_Content_Type;
+
+        return UNKNOWN;
     }
 }

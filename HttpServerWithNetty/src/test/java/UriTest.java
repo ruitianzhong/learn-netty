@@ -15,7 +15,7 @@ public class UriTest {
     public static String case4 = "/static/hello/world/test/abc";
     public static String case5 = "/abc//abc";
 
-    public static String[] expected3 = {"static/hello", "world", "test", "abc"};
+    public static String[] expected3 = {"static","hello", "world", "test", "abc"};
     public static String[] expected5 = {"abc", "abc"};
 
     @Test

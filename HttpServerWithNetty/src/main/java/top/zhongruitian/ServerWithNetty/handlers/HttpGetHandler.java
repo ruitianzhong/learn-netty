@@ -91,13 +91,15 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
     private void responseIfExist(String uri, ChannelHandlerContext ctx, FullHttpRequest request) {
         try {
             List<String> list = Utils.parseURIToList(new URI(uri));
+            String contentType = ContentType.getContentType(list.size() == 0 ? null : list.get(list.size() - 1));
             InputStream inputStream = getInputStream(list);
-            if (inputStream != null) {
+            if (!ContentType.UNKNOWN.equals(contentType) && inputStream != null) {
                 byte[] bytes = inputStream.readAllBytes();
                 ByteBuf byteBuf = Unpooled.copiedBuffer(bytes);
                 inputStream.close();
+
                 ctx.writeAndFlush(buildHttpResponseQuickly(HttpResponseStatus.OK, byteBuf,
-                                ContentType.getContentType(list.size() == 0 ? null : list.get(list.size() - 1))))
+                                contentType))
                         .addListener(ChannelFutureListener.CLOSE);
                 String info = request.headers().get(HttpHeaderNames.REFERER) + " visited " + uri;
                 System.out.println(info);
@@ -127,7 +129,7 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
         if (file != null && file.exists() && file.isFile()) {
             return new FileInputStream(file);
         }
-        return this.getClass().getClassLoader().getResourceAsStream(STATIC_DIRECTORY_NAME + "hello.html");
+        return this.getClass().getClassLoader().getResourceAsStream("hello.html");
     }
 
 
