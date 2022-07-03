@@ -1,21 +1,15 @@
-/*
- * Copyright 2022 ruitianzhong
- */
 package top.zhongruitian.ServerWithNetty.Utils;
 
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
 import top.zhongruitian.ServerWithNetty.exceptions.BadRequestException;
 
+import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Utils {
+public class URIHelper {
+    public static String Default_HTML_File_Name = "index.html";
+
     public static List<String> parseURIToList(URI uri) {
 
         List<String> list = new ArrayList<>();
@@ -31,6 +25,8 @@ public class Utils {
                 if (!sb.isEmpty() && sb.length() > 0) {
                     list.add(sb.toString());
                     sb.delete(0, sb.length());
+                } else if (temp == '\\') {
+                    throw new BadRequestException("Thr uri contains illegal character");
                 }
                 continue;
             }
@@ -39,14 +35,31 @@ public class Utils {
         if (!sb.isEmpty()) {
             list.add(sb.toString());
         }
-
         return list;
-
     }
-    public static void processRedirect(String redirectURI, ChannelHandlerContext ctx) {
-        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.TEMPORARY_REDIRECT);
-        fullHttpResponse.headers().set("Location", redirectURI);
-        ctx.writeAndFlush(fullHttpResponse).addListener(ChannelFutureListener.CLOSE);
+
+    public static String buildTheRedirectURI(List<String> list, String added) {
+        if (list.size() == 0) {
+            return "/" + added;
+        }
+        StringBuffer sb = new StringBuffer();
+        for (String s : list) {
+            sb.append("/");
+            sb.append(s);
+        }
+        return sb + "/" + added;
+    }
+    public static String getFilteredPathName(List<String> list) {
+
+        if (list.size() == 0) {
+            return null;
+        }
+        StringBuffer sb = new StringBuffer();
+        for (String s : list) {
+            sb.append(s);
+            sb.append(File.separator);
+        }
+        return sb.toString();
     }
 
 }
