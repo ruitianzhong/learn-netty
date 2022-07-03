@@ -1,3 +1,6 @@
+/*
+ * Copyright 2022 ruitianzhong
+ */
 package top.zhongruitian.ServerWithNetty.Utils;
 
 import java.io.File;
@@ -7,6 +10,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+/**
+@author ruitianzhong
+@email zhongruitian2003@qq.com
+@date 2022/7/3 13:28
+@description
+*/
 
 public class URIResult {
     private static final String[] Default_Index_Name = {"index.html", "home.html"};
