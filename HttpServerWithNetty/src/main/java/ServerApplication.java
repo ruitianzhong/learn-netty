@@ -1,28 +1,35 @@
+import top.zhongruitian.ServerWithNetty.Utils.ConfigValueConstants;
+import top.zhongruitian.ServerWithNetty.Utils.ParametersParser;
 import top.zhongruitian.ServerWithNetty.Utils.Server;
+import top.zhongruitian.ServerWithNetty.Utils.ServerConfiguration;
 import top.zhongruitian.ServerWithNetty.handlers.HttpChannelHandlerInitializer;
 
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 import static java.lang.System.exit;
 
 public class ServerApplication {
     public static int DEFAULT_PORT = 10086;
 
+
     public static void main(String[] args) throws IOException, URISyntaxException {
-        if (args.length != 2) {
-            Server server = new Server(new HttpChannelHandlerInitializer(), DEFAULT_PORT);
-            server.run();
-        } else if (args[0].equals("-p") || args.equals("--port")) {
-            int port = Integer.valueOf(args[1]);
-            if (port <= 0) {
-                System.out.println("Port number must be larger than ZERO!");
-                exit(-1);
-            }
-            Server server = new Server(new HttpChannelHandlerInitializer(), port);
-            server.run();
-        } else {
-            System.out.println("Usage:--port 8080 to specify the port number");
-        }
+
+
+        List<Properties> propertiesList = ParametersParser.parseParameters(args);
+        ServerConfiguration configuration = new ServerConfiguration(propertiesList);
+        configuration.build();
+        Server server = new Server(new HttpChannelHandlerInitializer(),configuration);
+        server.run();
     }
+
+
+
 }

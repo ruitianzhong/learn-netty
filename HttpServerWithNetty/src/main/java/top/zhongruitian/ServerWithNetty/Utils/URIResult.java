@@ -10,18 +10,19 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+
 /**
-@author ruitianzhong
-@email zhongruitian2003@qq.com
-@date 2022/7/3 13:28
-@description
-*/
+ * @author ruitianzhong
+ * @email zhongruitian2003@qq.com
+ * @date 2022/7/3 13:28
+ * @description
+ */
 
 public class URIResult {
-    private static final String[] Default_Index_Name = {"index.html", "home.html"};
+    public volatile static String[] Default_Index_Name = {"index.html", "home.html"};
     private final List<String> resources;
     private boolean isChecked = false;
-    private String filteredPath ;
+    private String filteredPath;
     private boolean redirect = false;
 
     private boolean NotFound = false;
@@ -121,5 +122,9 @@ public class URIResult {
             }
         }
         return false;
+    }
+
+    public static synchronized void setDefault_Index_Name(String[] default_Index_Name) {
+        Default_Index_Name = default_Index_Name;
     }
 }

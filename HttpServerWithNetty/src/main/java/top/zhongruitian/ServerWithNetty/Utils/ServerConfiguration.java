@@ -3,11 +3,9 @@
  */
 package top.zhongruitian.ServerWithNetty.Utils;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * @author ruitianzhong
@@ -16,111 +14,86 @@ import java.util.TimerTask;
  * @description
  */
 public class ServerConfiguration {
-    private long lastModified = 0L;
-    private int port = 10086;
-    private String[] indexFileName;
-    private String propertiesFileName;
+    private String[] indexFiles;
+    private int port;
 
-    private boolean usePropertiesFile = false;
+    private Properties DEFAULT_PROPERTIES = DefaultPropertiesFactory.getDefaultProperties();
 
-    private Properties properties;
+    private Properties ULTIMATE_PROPERTIES;
+
 
     private boolean built = false;
 
-    private long time = 60 * 1000;
+    private long time;
+    private List<Properties> propertiesList;
 
-    public ServerConfiguration() {
 
-    }
 
-    public ServerConfiguration port(int port) {
-        if (port <= 0) {
-            return this;
+
+    public ServerConfiguration(List<Properties> list) {
+        if (list == null) {
+            throw new IllegalArgumentException("list is null");
         }
-        this.port = port;
-        return this;
+        this.propertiesList = list;
+        list.add(DEFAULT_PROPERTIES);
     }
 
-    public ServerConfiguration propertiesFileName(String propertiesFileName) throws IOException {
-        File file = new File(propertiesFileName);
-        if (file.exists() && file.isFile()) {
-            lastModified = file.lastModified();
-            usePropertiesFile = true;
-            this.propertiesFileName = propertiesFileName;
-            properties = new Properties();
-            InputStream inputStream = new FileInputStream(file);
-            properties.load(inputStream);
-            setIndexFileName(properties);
-            setPort(properties);
-            long time = Integer.valueOf(properties.getProperty("server.time", "60"));
-            if (time > 0) {
-                this.time = time * 1000;
+    public ServerConfiguration build() throws IOException {
+        for (Properties properties : propertiesList) {
+            if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.PORT) == null && properties.getProperty(ConfigurationPrefix.PORT) != null) {
+                ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.PORT, properties.getProperty(ConfigurationPrefix.PORT));
             }
+            if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.TIME) == null && properties.getProperty(ConfigurationPrefix.TIME) != null) {
+                ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.TIME, properties.getProperty(ConfigurationPrefix.TIME));
+            }
+            if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.INDEX) == null && properties.getProperty(ConfigurationPrefix.INDEX) != null) {
+                ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.INDEX, properties.getProperty(ConfigurationPrefix.INDEX));
+            }
+        }
+        int port = Integer.valueOf(ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.PORT));
+
+        int time = Integer.valueOf(ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.TIME));
+        String[] indexFiles = getIndexFiles();
+        check(port,indexFiles,time);
+        this.port = port;
+        this.indexFiles =indexFiles;
+        this.time = time;
+        URIResult.setDefault_Index_Name(indexFiles);
+        return this;
+    }
+
+    private String[] getIndexFiles() {
+        String raw = ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.INDEX);
+        String [] ret;
+        if (raw.contains(",")) {
+            ret = raw.split(",");
         } else {
-            throw new FileNotFoundException("Can not find the properties file");
+            ret = new String[]{raw};
         }
-        return this;
+     return ret;
     }
 
-    public ServerConfiguration indexFileName(List<String> list) {
-        if (list.size() == 0) {
-            indexFileName = null;
-            return this;
-        }
-        indexFileName = new String[list.size()];
-        int i = 0;
-        for (String temp : list) {
-            indexFileName[i++] = temp;
-        }
-        return this;
-    }
-
-    private void setPort(Properties properties) {
-        port = Integer.valueOf(properties.getProperty("top.zhongruitian.server.port", "10086"));
-    }
-
-    private void setIndexFileName(Properties properties) {
-        String index = properties.getProperty("server.index", "index.html,home.html");
-        String[] indexes = index.split(",");
-        if (indexes == null) {
-            indexFileName = new String[]{index};
-        } else {
-            indexFileName = indexes;
+    private void check(int port, String[] indexFiles, long time) {
+        if (port <= 0 || indexFiles == null || indexFiles.length == 0 || time <= 0) {
+            throw new IllegalArgumentException("port<=0||indexFiles==null||indexFiles.length==0||time<=0");
         }
     }
-
-
-    public ServerConfiguration build() {
-        if (this.usePropertiesFile && !built) {
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    File file = new File(propertiesFileName);
-                    if (file.exists() && file.isFile() && file.lastModified() > lastModified) {
-                        try {
-                            InputStream inputStream = new FileInputStream(file);
-                            Properties properties = new Properties();
-                            properties.load(inputStream);
-                            setIndexFileName(properties);
-                            URIResult.setDefault_Index_Name(indexFileName);
-                            System.out.println("Configuration changed successfully!");
-                        } catch (FileNotFoundException e) {
-                            throw new RuntimeException(e);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
-            }, 0, time);
-        }
-        built = true;
-        return this;
+    public int getPort(){
+        return port;
     }
 
-    public ServerConfiguration time(long second) {
-        this.time = second > 0 ? second * 1000 : 20000;
-        return this;
+    public long getTime() {
+        return time;
+    }
+    public boolean replace(Properties oldProperties,Properties newProperties){
+        for(int i = 0;i<propertiesList.size();i++){
+            if(oldProperties==propertiesList.get(i)){
+                propertiesList.set(i,newProperties);
+                return true;
+            }
+        }
+        return false;
+
     }
 
 }

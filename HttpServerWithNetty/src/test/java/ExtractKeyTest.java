@@ -9,10 +9,10 @@ import static org.junit.Assert.assertEquals;
  * @date 2022/7/2 18:36
  * @description
  */
-public class RegExTest {
+public class ExtractKeyTest {
 
     @Test
-    public void RegularExpressionTest() {
+    public void checkExtensionNameTest() {
         String css = "semantic.min.css",
                 html = "test.html",
                 js = "vue.js",
@@ -29,5 +29,11 @@ public class RegExTest {
         assertEquals(ContentType.getContentType(png), ContentType.PNG);
         assertEquals(ContentType.getContentType(unknown), ContentType.UNKNOWN);
         assertEquals(ContentType.getContentType(unknownExtension), ContentType.UNKNOWN);
+    }
+
+    @Test
+    public void PropertiesParsingTest() {
+
+
     }
 }

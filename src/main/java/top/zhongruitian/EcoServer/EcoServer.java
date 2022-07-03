@@ -9,9 +9,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-public class DiscardServer {
+public class EcoServer {
     private int port;
-    public DiscardServer(int port)
+    public EcoServer(int port)
     {
         this.port=port;
     }
@@ -26,7 +26,7 @@ public class DiscardServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast(new discardServerHandler());
+                        socketChannel.pipeline().addLast(new EcoServerHandler());
                         }
                     }).option(ChannelOption.SO_BACKLOG,128)
                     .childOption(ChannelOption.SO_KEEPALIVE,true);
@@ -43,6 +43,6 @@ public class DiscardServer {
     public static void main(String[] args) {
         int port=8080;
 
-            new DiscardServer(port).run();
+            new EcoServer(port).run();
     }
 }

@@ -12,8 +12,9 @@ public class Server {
     public static final String SERVER_NAME = "Http Server With Netty";
     private ChannelHandler[] handlers;
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
-    private int port = 8080;
+    private int port = 10086;
     private ChannelInitializer<Channel> channelInitializer;
+    private ServerConfiguration configuration = null;
 
     public Server(ChannelHandler... channelInboundHandlerAdapter) {
         this.handlers = channelInboundHandlerAdapter;
@@ -22,11 +23,21 @@ public class Server {
     public Server(int port, ChannelHandler... channelInboundHandlerAdapters) {
         this.handlers = channelInboundHandlerAdapters;
         this.port = port;
+    }
 
+
+    public Server(ServerConfiguration configuration, ChannelHandler... channelHandlers) {
+        this.handlers = channelHandlers;
+        this.port = 10086;
+        this.configuration = configuration;
     }
 
     public Server(ChannelInitializer channelInitializer) {
         this.channelInitializer = channelInitializer;
+    }
+    public Server(ChannelInitializer channelInitializer,ServerConfiguration configuration){
+        this.configuration = configuration;
+        this.port =configuration.getPort();
     }
 
     public Server(ChannelInitializer channelInitializer, int port) {
