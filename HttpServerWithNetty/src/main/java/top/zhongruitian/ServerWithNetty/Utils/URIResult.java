@@ -25,7 +25,7 @@ public class URIResult {
 
     public URIResult(String url) throws URISyntaxException {
         URI standardURI = new URI(url);
-        resources = Utils.parseURIToList(standardURI);
+        resources = URIHelper.parseURIToList(standardURI);
         filteredPath = URIHelper.getFilteredPathName(resources);
     }
 

@@ -49,6 +49,7 @@ public class URIHelper {
         }
         return sb + "/" + added;
     }
+
     public static String getFilteredPathName(List<String> list) {
 
         if (list.size() == 0) {

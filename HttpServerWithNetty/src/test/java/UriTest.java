@@ -1,5 +1,5 @@
 import org.junit.Test;
-import top.zhongruitian.ServerWithNetty.Utils.Utils;
+import top.zhongruitian.ServerWithNetty.Utils.URIHelper;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,26 +15,26 @@ public class UriTest {
     public static String case4 = "/static/hello/world/test/abc";
     public static String case5 = "/abc//abc";
 
-    public static String[] expected3 = {"static","hello", "world", "test", "abc"};
+    public static String[] expected3 = {"static", "hello", "world", "test", "abc"};
     public static String[] expected5 = {"abc", "abc"};
 
     @Test
     public void parseUriToListTest() throws URISyntaxException {
-        List<String> list3 = Utils.parseURIToList(new URI(case3)),
-                list4 = Utils.parseURIToList(new URI(case4)),
-                list5 = Utils.parseURIToList(new URI(case5));
+        List<String> list3 = URIHelper.parseURIToList(new URI(case3)),
+                list4 = URIHelper.parseURIToList(new URI(case4)),
+                list5 = URIHelper.parseURIToList(new URI(case5));
 
         String s;
         int i = 0;
         try {
-            List<String> list1 = Utils.parseURIToList(new URI(case1));
+            List<String> list1 = URIHelper.parseURIToList(new URI(case1));
             fail();
         } catch (URISyntaxException ex) {
 
         }
 
         try {
-            List<String> list2 = Utils.parseURIToList(new URI(case2));
+            List<String> list2 = URIHelper.parseURIToList(new URI(case2));
             for (String temp : list2) {
                 System.out.println(temp);
             }
