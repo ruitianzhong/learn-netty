@@ -18,7 +18,6 @@ public class ServerApplication {
 
 
     public static void main(String[] args) throws IOException, URISyntaxException {
-
         List<Properties> propertiesList = ParametersParser.parseParameters(args);
         ServerConfiguration configuration = new ServerConfiguration(propertiesList);
         configuration.build();
@@ -27,7 +26,4 @@ public class ServerApplication {
         watcher.start();
         server.run();
     }
-
-
-
 }
