@@ -17,7 +17,7 @@ public class ContentType {
 
     public static String getContentType(String fileName) {
         if(fileName==null){
-            return Default_Content_Type;
+            return UNKNOWN;
         }
         int lastIndexOf=fileName.lastIndexOf(".");
         if (lastIndexOf == -1) {

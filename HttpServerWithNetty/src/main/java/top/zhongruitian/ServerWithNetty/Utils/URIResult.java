@@ -9,12 +9,15 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 public class URIResult {
-    private final List<String> resources ;
+    private static final String[] Default_Index_Name = {"index.html", "home.html"};
+    private final List<String> resources;
     private boolean isChecked = false;
-    private String filteredPath = null;
+    private String filteredPath ;
     private boolean redirect = false;
 
     private boolean NotFound = false;
+    private String existing_default_index_file = null;
+    private String contentType = null;
 
 
     private File file = null;
@@ -23,28 +26,34 @@ public class URIResult {
     public URIResult(String url) throws URISyntaxException {
         URI standardURI = new URI(url);
         resources = Utils.parseURIToList(standardURI);
-        if (resources.size() == 0) {
-            redirect = true;
-        } else {
-            filteredPath = URIHelper.getFilteredPathName(resources);
-        }
+        filteredPath = URIHelper.getFilteredPathName(resources);
     }
 
     private void check() {
         if (!isChecked) {
-            if (!redirect) {
+            if (filteredPath != null) {
                 file = new File(filteredPath);
                 if (file.exists()) {
                     if (file.isFile()) {
-                        String contentType = getContentType(filteredPath);
+                        contentType = getContentType(filteredPath);
                         if (ContentType.UNKNOWN.equals(contentType)) {
                             NotFound = true;
+                        } else {
+                            succeed = true;
                         }
-                        succeed = true;
                     } else {
-                        redirect = true;
+                        if (setDefaultIndexFileNameIfExist(filteredPath)) {
+                            redirect = true;
+                        } else {
+                            NotFound = true;
+                        }
                     }
+                } else {
+                    NotFound = true;
                 }
+            } else {
+                NotFound = !setDefaultIndexFileNameIfExist("");
+                redirect = !NotFound;
             }
             isChecked = true;
         }
@@ -55,7 +64,13 @@ public class URIResult {
         return ContentType.getContentType(resources.get(resources.size() - 1));
     }
 
+    public String getContentType() {
+        check();
+        return this.contentType;
+    }
+
     public InputStream getInputStream() throws FileNotFoundException {
+        check();
         if (!succeed) {
             return null;
         } else {
@@ -74,8 +89,28 @@ public class URIResult {
     }
 
     public boolean isNotFound() {
+        check();
         return NotFound;
     }
 
+    public String getRedirectURI() {
+        check();
+        if (redirect) {
+            return URIHelper.buildTheRedirectURI(resources, existing_default_index_file);
+        }
+        return null;
+    }
 
+    private boolean setDefaultIndexFileNameIfExist(String path) {
+
+        for (String s : Default_Index_Name) {
+            String RedirectFilePath = path + s + File.separator;
+            File file = new File(RedirectFilePath);
+            if (file.exists() && file.isFile()) {
+                existing_default_index_file = s;
+                return true;
+            }
+        }
+        return false;
+    }
 }
