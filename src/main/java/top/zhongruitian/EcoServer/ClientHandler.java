@@ -14,7 +14,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         String s;
         int i = 5;
         {
-
             System.out.println("Please enter the word!");
             Scanner scanner = new Scanner(System.in);
             s = scanner.nextLine();

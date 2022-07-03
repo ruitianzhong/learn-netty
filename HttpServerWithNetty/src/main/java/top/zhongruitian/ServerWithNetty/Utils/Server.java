@@ -38,6 +38,7 @@ public class Server {
     public Server(ChannelInitializer channelInitializer,ServerConfiguration configuration){
         this.configuration = configuration;
         this.port =configuration.getPort();
+        this.channelInitializer =channelInitializer;//bug here
     }
 
     public Server(ChannelInitializer channelInitializer, int port) {

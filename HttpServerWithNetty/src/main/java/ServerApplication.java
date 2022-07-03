@@ -1,7 +1,4 @@
-import top.zhongruitian.ServerWithNetty.Utils.ConfigValueConstants;
-import top.zhongruitian.ServerWithNetty.Utils.ParametersParser;
-import top.zhongruitian.ServerWithNetty.Utils.Server;
-import top.zhongruitian.ServerWithNetty.Utils.ServerConfiguration;
+import top.zhongruitian.ServerWithNetty.Utils.*;
 import top.zhongruitian.ServerWithNetty.handlers.HttpChannelHandlerInitializer;
 
 
@@ -22,11 +19,12 @@ public class ServerApplication {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
 
-
         List<Properties> propertiesList = ParametersParser.parseParameters(args);
         ServerConfiguration configuration = new ServerConfiguration(propertiesList);
         configuration.build();
         Server server = new Server(new HttpChannelHandlerInitializer(),configuration);
+        Watcher watcher = new Watcher(configuration);
+        watcher.start();
         server.run();
     }
 

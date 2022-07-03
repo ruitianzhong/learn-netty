@@ -28,21 +28,23 @@ public class ServerConfiguration {
     private List<Properties> propertiesList;
 
 
-
-
     public ServerConfiguration(List<Properties> list) {
         if (list == null) {
             throw new IllegalArgumentException("list is null");
         }
         this.propertiesList = list;
+        ULTIMATE_PROPERTIES = new Properties();
         list.add(DEFAULT_PROPERTIES);
     }
 
     public ServerConfiguration build() throws IOException {
+        ULTIMATE_PROPERTIES.clear();//bug here
         for (Properties properties : propertiesList) {
+
             if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.PORT) == null && properties.getProperty(ConfigurationPrefix.PORT) != null) {
                 ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.PORT, properties.getProperty(ConfigurationPrefix.PORT));
             }
+
             if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.TIME) == null && properties.getProperty(ConfigurationPrefix.TIME) != null) {
                 ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.TIME, properties.getProperty(ConfigurationPrefix.TIME));
             }
@@ -54,9 +56,9 @@ public class ServerConfiguration {
 
         int time = Integer.valueOf(ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.TIME));
         String[] indexFiles = getIndexFiles();
-        check(port,indexFiles,time);
+        check(port, indexFiles, time);
         this.port = port;
-        this.indexFiles =indexFiles;
+        this.indexFiles = indexFiles;
         this.time = time;
         URIResult.setDefault_Index_Name(indexFiles);
         return this;
@@ -64,13 +66,13 @@ public class ServerConfiguration {
 
     private String[] getIndexFiles() {
         String raw = ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.INDEX);
-        String [] ret;
+        String[] ret;
         if (raw.contains(",")) {
             ret = raw.split(",");
         } else {
             ret = new String[]{raw};
         }
-     return ret;
+        return ret;
     }
 
     private void check(int port, String[] indexFiles, long time) {
@@ -78,20 +80,24 @@ public class ServerConfiguration {
             throw new IllegalArgumentException("port<=0||indexFiles==null||indexFiles.length==0||time<=0");
         }
     }
-    public int getPort(){
+
+    public int getPort() {
         return port;
     }
 
     public long getTime() {
         return time;
     }
-    public boolean replace(Properties oldProperties,Properties newProperties){
-        for(int i = 0;i<propertiesList.size();i++){
-            if(oldProperties==propertiesList.get(i)){
-                propertiesList.set(i,newProperties);
+
+    public boolean replace(Properties oldProperties, Properties newProperties) {
+        for (int i = 0; i < propertiesList.size(); i++) {
+            if (oldProperties == propertiesList.get(i)) {
+                propertiesList.set(i, newProperties);
+
                 return true;
             }
         }
+
         return false;
 
     }

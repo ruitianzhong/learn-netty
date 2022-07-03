@@ -18,6 +18,7 @@ public class ParametersParser {
                 fileName = ConfigValueConstants.DEFAULT_PROPERTIES_FILE_NAME;
                 propertiesList.add(properties);
                 Watcher.watchedFileName = fileName;
+                Watcher.watchedProperties = properties;//bug here
             }
             return propertiesList;
         }
@@ -64,6 +65,7 @@ public class ParametersParser {
         }
         if (file) {
             Watcher.watchedFileName = fileName;
+            System.out.println("watched properties");
             Watcher.watchedProperties = fileProperties;
             propertiesList.add(fileProperties);
         }

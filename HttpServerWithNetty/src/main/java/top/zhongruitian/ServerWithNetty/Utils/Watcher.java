@@ -22,19 +22,26 @@ public class Watcher {
 
     public void start() {
         Timer timer = new Timer();
+        System.out.println("Start the timer");
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+
                 if (watchedFileName != null) {
                     {
                         try {
                             setProperties();
                             if (properties != null && configuration.replace(watchedProperties, properties)) {
                                 configuration.build();
+                                watchedProperties = properties;
                             }
+                            String[] test = URIResult.Default_Index_Name;
+
                         } catch (FileNotFoundException e) {
+                            System.out.println("ex1");
                             throw new RuntimeException(e);
                         } catch (IOException e) {
+                            System.out.println("ex2");
                             throw new RuntimeException(e);
                         }
 
@@ -47,11 +54,13 @@ public class Watcher {
 
     private void setProperties() throws IOException {
         File file = new File(watchedFileName);
+
         if (file.exists() && file.isFile() && file.lastModified() > lastModified) {
             FileInputStream fileInputStream = new FileInputStream(file);
             Properties properties = new Properties();
             properties.load(fileInputStream);
             this.properties = properties;
+            lastModified = file.lastModified();
         } else {
             properties = null;
         }
