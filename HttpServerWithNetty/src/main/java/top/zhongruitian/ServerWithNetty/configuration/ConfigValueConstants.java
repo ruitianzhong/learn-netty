@@ -1,4 +1,4 @@
-package top.zhongruitian.ServerWithNetty.Utils;
+package top.zhongruitian.ServerWithNetty.configuration;
 
 public class ConfigValueConstants {
     public static final String PORT = "10086";

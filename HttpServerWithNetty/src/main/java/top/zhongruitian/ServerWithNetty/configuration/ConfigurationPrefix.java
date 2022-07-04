@@ -1,4 +1,4 @@
-package top.zhongruitian.ServerWithNetty.Utils;
+package top.zhongruitian.ServerWithNetty.configuration;
 
 public class ConfigurationPrefix {
     public static final String PORT = "server.port";

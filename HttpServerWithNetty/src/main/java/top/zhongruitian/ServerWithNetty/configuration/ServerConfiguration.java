@@ -1,7 +1,10 @@
 /*
  * Copyright 2022 ruitianzhong
  */
-package top.zhongruitian.ServerWithNetty.Utils;
+package top.zhongruitian.ServerWithNetty.configuration;
+
+import top.zhongruitian.ServerWithNetty.Utils.URIResult;
+import top.zhongruitian.ServerWithNetty.exceptions.DynamicConfigException;
 
 import java.io.IOException;
 import java.util.List;
@@ -77,7 +80,7 @@ public class ServerConfiguration {
 
     private void check(int port, String[] indexFiles, long time) {
         if (port <= 0 || indexFiles == null || indexFiles.length == 0 || time <= 0) {
-            throw new IllegalArgumentException("port<=0||indexFiles==null||indexFiles.length==0||time<=0");
+            throw new DynamicConfigException("port <= 0 || indexFiles == null || indexFiles.length == 0 || time <= 0");
         }
     }
 

@@ -1,7 +1,7 @@
 /*
  * Copyright 2022 ruitianzhong
  */
-package top.zhongruitian.ServerWithNetty.Utils;
+package top.zhongruitian.ServerWithNetty.configuration;
 
 import java.util.Properties;
 
@@ -11,7 +11,6 @@ import java.util.Properties;
  * @date 2022/7/3 18:26
  * @description
  */
-
 public class DefaultPropertiesFactory {
     public static Properties getDefaultProperties() {
         Properties properties = new Properties();
