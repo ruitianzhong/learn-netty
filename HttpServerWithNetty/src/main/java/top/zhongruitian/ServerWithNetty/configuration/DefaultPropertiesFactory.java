@@ -15,7 +15,7 @@ public class DefaultPropertiesFactory {
     public static Properties getDefaultProperties() {
         Properties properties = new Properties();
         properties.setProperty(ConfigurationPrefix.PORT, ConfigValueConstants.PORT);
-        properties.setProperty(ConfigurationPrefix.TIME, ConfigValueConstants.INDEX);
+        properties.setProperty(ConfigurationPrefix.PERIOD, ConfigValueConstants.PERIOD);
         properties.setProperty(ConfigurationPrefix.INDEX, ConfigValueConstants.INDEX);
         return properties;
     }
