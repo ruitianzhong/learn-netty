@@ -24,8 +24,6 @@ public class ServerConfiguration {
     private Properties ULTIMATE_PROPERTIES;
 
 
-    private boolean built = false;
-
     private boolean loaded = false;
 
     private long time;
@@ -86,18 +84,21 @@ public class ServerConfiguration {
     }
 
     public int getPort() {
+        checkLoaded();
         return port;
     }
 
     public long getTime() {
+        checkLoaded();
         return time;
     }
 
     public boolean replace(Properties oldProperties, Properties newProperties) {
+        checkLoaded();
         for (int i = 0; i < propertiesList.size(); i++) {
             if (oldProperties == propertiesList.get(i)) {
-                propertiesList.set(i, newProperties);
-
+                propertiesList.remove(oldProperties);
+                propertiesList.add(0, newProperties);
                 return true;
             }
         }
@@ -106,6 +107,16 @@ public class ServerConfiguration {
 
     public boolean isLoaded() {
         return loaded;
+    }
+
+    private void checkLoaded() {
+        if (!loaded) {
+            throw new IllegalArgumentException("The ServerConfiguration has not been loaded");
+        }
+    }
+
+    public void reload() {
+        checkLoaded();
     }
 
 }

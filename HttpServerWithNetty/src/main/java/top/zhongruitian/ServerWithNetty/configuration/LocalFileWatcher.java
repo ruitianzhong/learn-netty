@@ -10,10 +10,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class LocalFileWatcher implements Watcher {
-    public static long lastModified;
+    private long lastModified;
 
-    public static Properties watchedProperties;
-    public static String watchedFileName = null;
+    private Properties watchedProperties;
+    private String watchedFileName = null;
     private ServerConfiguration configuration;
     private Properties properties;
     private long period;
@@ -30,6 +30,9 @@ public class LocalFileWatcher implements Watcher {
                             configuration.load();
                             watchedProperties = properties;
                             log("Configuration was reloaded successfully");
+                            if (updatePeriodAndCheckIfRestartNeeded()) {
+                                restart();
+                            }
                         }
 
                     } catch (FileNotFoundException e) {
@@ -46,14 +49,21 @@ public class LocalFileWatcher implements Watcher {
     };
     private Timer timer;
 
-    public LocalFileWatcher(ServerConfiguration configuration) {
+    public LocalFileWatcher(ServerConfiguration configuration, String fileName, Properties fileProperties, long lastModified) {
+        if (configuration == null || fileName == null || fileProperties == null) {
+            throw new IllegalArgumentException("configuration is null");
+        }
         this.configuration = configuration;
+        this.watchedFileName = fileName;
+        this.watchedProperties = fileProperties;
+        this.lastModified = lastModified;
         timer = new Timer();
     }
 
+
     @Override
     public void start() {
-
+        period = configuration.getTime();
         log("Timer was started");
         timer.schedule(task, 0, configuration.getTime());
     }
@@ -67,7 +77,6 @@ public class LocalFileWatcher implements Watcher {
 
     private void setProperties() throws IOException {
         File file = new File(watchedFileName);
-
         if (file.exists() && file.isFile() && file.lastModified() > lastModified) {
             FileInputStream fileInputStream = new FileInputStream(file);
             Properties properties = new Properties();
@@ -75,6 +84,7 @@ public class LocalFileWatcher implements Watcher {
             this.properties = properties;
             lastModified = file.lastModified();
             log("Configuration file had changed.Reloading...");
+
         } else {
             properties = null;
         }
@@ -86,7 +96,7 @@ public class LocalFileWatcher implements Watcher {
         System.out.println(date + " " + msg);
     }
 
-    private boolean updatePeriodAndCheckIfRestartNeeded(long time) {
+    private boolean updatePeriodAndCheckIfRestartNeeded() {
         String period = properties.getProperty(ConfigurationPrefix.TIME);
         if (period == null) {
             return false;
@@ -98,6 +108,4 @@ public class LocalFileWatcher implements Watcher {
         }
         return false;
     }
-
-
 }

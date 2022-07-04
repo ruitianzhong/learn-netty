@@ -17,6 +17,4 @@ public class HttpChannelHandlerInitializer extends ChannelInitializer<Channel> {
         ch.pipeline().addLast(new HttpObjectAggregator(65535));
         ch.pipeline().addLast(new HttpGetHandler());
     }
-
-
 }

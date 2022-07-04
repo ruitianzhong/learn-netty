@@ -1,28 +1,31 @@
+/*
+ * Copyright 2022 ruitianzhong.All rights reserved.
+ */
 package top.zhongruitian.ServerWithNetty.Utils;
 
 import top.zhongruitian.ServerWithNetty.configuration.ConfigValueConstants;
 import top.zhongruitian.ServerWithNetty.configuration.ConfigurationPrefix;
-import top.zhongruitian.ServerWithNetty.configuration.LocalFileWatcher;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 public class ParametersParser {
+    public static String fileName = null;
+    public static Properties fileProperties = null;
+    public static long lastModified = 0;
+
     public static List<Properties> parseParameters(String[] args) throws IOException {
         List<Properties> propertiesList = new ArrayList<>();
-        String fileName = null;
+        fileName = null;
         if (args.length == 0) {
             Properties properties = getDefaultPropertiesIfExist(ConfigValueConstants.DEFAULT_PROPERTIES_FILE_NAME);
             if (properties != null) {
                 fileName = ConfigValueConstants.DEFAULT_PROPERTIES_FILE_NAME;
                 propertiesList.add(properties);
-                LocalFileWatcher.watchedFileName = fileName;
-                LocalFileWatcher.watchedProperties = properties;//bug here
+                //bug here previously
+                fileProperties = properties;
             }
             return propertiesList;
         }
@@ -60,17 +63,16 @@ public class ParametersParser {
                 fileProperties = getDefaultPropertiesIfExist(fileName);
                 if (fileProperties != null) {
                     file = true;
+                } else {
+                    throw new FileNotFoundException("unable to find the file: " + fileName);
                 }
             }
         }
         if (command) {
             propertiesList.add(commandProperties);
-
         }
         if (file) {
-            LocalFileWatcher.watchedFileName = fileName;
             System.out.println("watched properties");
-            LocalFileWatcher.watchedProperties = fileProperties;
             propertiesList.add(fileProperties);
         }
         return propertiesList;
@@ -82,11 +84,15 @@ public class ParametersParser {
             InputStream inputStream = new FileInputStream(file);
             Properties properties = new Properties();
             properties.load(inputStream);
-            LocalFileWatcher.lastModified = file.lastModified();
+            lastModified = file.lastModified();
             return properties;
         } else {
             return null;
         }
+    }
+
+    public static boolean havaFileToWatch() {
+        return fileName != null && lastModified != 0 && fileProperties != null;
     }
 
 }
