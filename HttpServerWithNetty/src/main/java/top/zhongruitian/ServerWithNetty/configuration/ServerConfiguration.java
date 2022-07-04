@@ -3,7 +3,6 @@
  */
 package top.zhongruitian.ServerWithNetty.configuration;
 
-import top.zhongruitian.ServerWithNetty.Utils.URIResult;
 import top.zhongruitian.ServerWithNetty.exceptions.DynamicConfigException;
 
 import java.io.IOException;
@@ -27,6 +26,8 @@ public class ServerConfiguration {
 
     private boolean built = false;
 
+    private boolean loaded = false;
+
     private long time;
     private List<Properties> propertiesList;
 
@@ -40,7 +41,7 @@ public class ServerConfiguration {
         list.add(DEFAULT_PROPERTIES);
     }
 
-    public ServerConfiguration build() throws IOException {
+    public ServerConfiguration load() throws IOException {
         ULTIMATE_PROPERTIES.clear();//bug here
         for (Properties properties : propertiesList) {
 
@@ -56,14 +57,14 @@ public class ServerConfiguration {
             }
         }
         int port = Integer.valueOf(ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.PORT));
-
         int time = Integer.valueOf(ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.TIME));
         String[] indexFiles = getIndexFiles();
         check(port, indexFiles, time);
         this.port = port;
         this.indexFiles = indexFiles;
         this.time = time;
-        URIResult.setDefault_Index_Name(indexFiles);
+        ConfigurationRepository.setIndex_File_Name(indexFiles);
+        loaded = true;
         return this;
     }
 
@@ -100,9 +101,11 @@ public class ServerConfiguration {
                 return true;
             }
         }
-
         return false;
+    }
 
+    public boolean isLoaded() {
+        return loaded;
     }
 
 }

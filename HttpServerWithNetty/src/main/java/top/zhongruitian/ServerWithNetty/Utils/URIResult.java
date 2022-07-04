@@ -3,6 +3,8 @@
  */
 package top.zhongruitian.ServerWithNetty.Utils;
 
+import top.zhongruitian.ServerWithNetty.configuration.ConfigurationRepository;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,7 +21,6 @@ import java.util.List;
  */
 
 public class URIResult {
-    public volatile static String[] Default_Index_Name = {"index.html", "home.html"};
     private final List<String> resources;
     private boolean isChecked = false;
     private String filteredPath;
@@ -113,7 +114,7 @@ public class URIResult {
 
     private boolean setDefaultIndexFileNameIfExist(String path) {
 
-        for (String s : Default_Index_Name) {
+        for (String s : ConfigurationRepository.getIndex_File_Name()) {
             String RedirectFilePath = path + s + File.separator;
             File file = new File(RedirectFilePath);
             if (file.exists() && file.isFile()) {
@@ -122,9 +123,5 @@ public class URIResult {
             }
         }
         return false;
-    }
-
-    public static synchronized void setDefault_Index_Name(String[] default_Index_Name) {
-        Default_Index_Name = default_Index_Name;
     }
 }

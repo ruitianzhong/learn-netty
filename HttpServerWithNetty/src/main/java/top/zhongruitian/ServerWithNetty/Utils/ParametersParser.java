@@ -2,7 +2,7 @@ package top.zhongruitian.ServerWithNetty.Utils;
 
 import top.zhongruitian.ServerWithNetty.configuration.ConfigValueConstants;
 import top.zhongruitian.ServerWithNetty.configuration.ConfigurationPrefix;
-import top.zhongruitian.ServerWithNetty.configuration.Watcher;
+import top.zhongruitian.ServerWithNetty.configuration.LocalFileWatcher;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,8 +21,8 @@ public class ParametersParser {
             if (properties != null) {
                 fileName = ConfigValueConstants.DEFAULT_PROPERTIES_FILE_NAME;
                 propertiesList.add(properties);
-                Watcher.watchedFileName = fileName;
-                Watcher.watchedProperties = properties;//bug here
+                LocalFileWatcher.watchedFileName = fileName;
+                LocalFileWatcher.watchedProperties = properties;//bug here
             }
             return propertiesList;
         }
@@ -68,9 +68,9 @@ public class ParametersParser {
 
         }
         if (file) {
-            Watcher.watchedFileName = fileName;
+            LocalFileWatcher.watchedFileName = fileName;
             System.out.println("watched properties");
-            Watcher.watchedProperties = fileProperties;
+            LocalFileWatcher.watchedProperties = fileProperties;
             propertiesList.add(fileProperties);
         }
         return propertiesList;
@@ -82,7 +82,7 @@ public class ParametersParser {
             InputStream inputStream = new FileInputStream(file);
             Properties properties = new Properties();
             properties.load(inputStream);
-            Watcher.lastModified = file.lastModified();
+            LocalFileWatcher.lastModified = file.lastModified();
             return properties;
         } else {
             return null;
