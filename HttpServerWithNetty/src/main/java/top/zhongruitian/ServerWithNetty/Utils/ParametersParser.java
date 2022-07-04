@@ -41,7 +41,7 @@ public class ParametersParser {
                 i++;
                 command = true;
             } else if ("-t".equals(s) && length - i > 1) {
-                commandProperties.setProperty(ConfigurationPrefix.TIME, args[++i]);
+                commandProperties.setProperty(ConfigurationPrefix.PERIOD, args[++i]);
                 i++;
                 command = true;
             } else if ("-i".equals(s) && length - i > 1) {
