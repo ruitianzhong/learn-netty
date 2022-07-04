@@ -111,8 +111,8 @@ public class ServerConfiguration {
                 ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.PORT, properties.getProperty(ConfigurationPrefix.PORT));
             }
 
-            if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.TIME) == null && properties.getProperty(ConfigurationPrefix.TIME) != null) {
-                ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.TIME, properties.getProperty(ConfigurationPrefix.TIME));
+            if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.PERIOD) == null && properties.getProperty(ConfigurationPrefix.PERIOD) != null) {
+                ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.PERIOD, properties.getProperty(ConfigurationPrefix.PERIOD));
             }
             if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.INDEX) == null && properties.getProperty(ConfigurationPrefix.INDEX) != null) {
                 ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.INDEX, properties.getProperty(ConfigurationPrefix.INDEX));
@@ -122,7 +122,7 @@ public class ServerConfiguration {
 
     private void updateConfigurationRepo() {
         int port = Integer.valueOf(ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.PORT));
-        int time = Integer.valueOf(ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.TIME));
+        int time = Integer.valueOf(ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.PERIOD));
         String[] indexFiles = getIndexFiles();
         check(port, indexFiles, time);
         this.port = port;
