@@ -27,7 +27,7 @@ public class LocalFileWatcher implements Watcher {
                     try {
                         setProperties();
                         if (properties != null && configuration.replace(watchedProperties, properties)) {
-                            configuration.load();
+                            configuration.reload();
                             watchedProperties = properties;
                             log("Configuration was reloaded successfully");
                             if (updatePeriodAndCheckIfRestartNeeded()) {
@@ -50,7 +50,7 @@ public class LocalFileWatcher implements Watcher {
     private Timer timer;
 
     public LocalFileWatcher(ServerConfiguration configuration, String fileName, Properties fileProperties, long lastModified) {
-        if (configuration == null || fileName == null || fileProperties == null) {
+        if (configuration == null || !configuration.isLoaded() || fileName == null || fileProperties == null) {
             throw new IllegalArgumentException("configuration is null");
         }
         this.configuration = configuration;
@@ -63,16 +63,16 @@ public class LocalFileWatcher implements Watcher {
 
     @Override
     public void start() {
-        period = configuration.getTime();
+        period = ConfigurationRepository.getPeriod();
         log("Timer was started");
-        timer.schedule(task, 0, configuration.getTime());
+        timer.schedule(task, 0, period);
     }
 
     private void restart() {
-        log("restart the timer");
+        log("restart the timer: old period ");
         timer.cancel();
         timer = new Timer();
-        timer.schedule(task, 0, configuration.getTime());
+        timer.schedule(task, 0, period);
     }
 
     private void setProperties() throws IOException {
@@ -97,12 +97,10 @@ public class LocalFileWatcher implements Watcher {
     }
 
     private boolean updatePeriodAndCheckIfRestartNeeded() {
-        String period = properties.getProperty(ConfigurationPrefix.TIME);
-        if (period == null) {
-            return false;
-        }
-        long newPeriod = Integer.valueOf(period);
+        long newPeriod = ConfigurationRepository.getPeriod();
         if (newPeriod > 0 && newPeriod != this.period) {
+            log("Period has changed." +
+                    "Timer restarting... Old period: " + period + " new period " + newPeriod);
             this.period = newPeriod;
             return true;
         }

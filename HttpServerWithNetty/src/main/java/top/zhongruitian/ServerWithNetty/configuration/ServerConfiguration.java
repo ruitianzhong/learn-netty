@@ -22,13 +22,9 @@ public class ServerConfiguration {
     private Properties DEFAULT_PROPERTIES = DefaultPropertiesFactory.getDefaultProperties();
 
     private Properties ULTIMATE_PROPERTIES;
-
-
     private boolean loaded = false;
-
     private long time;
     private List<Properties> propertiesList;
-
 
     public ServerConfiguration(List<Properties> list) {
         if (list == null) {
@@ -39,31 +35,12 @@ public class ServerConfiguration {
         list.add(DEFAULT_PROPERTIES);
     }
 
-    public ServerConfiguration load() throws IOException {
-        ULTIMATE_PROPERTIES.clear();//bug here
-        for (Properties properties : propertiesList) {
-
-            if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.PORT) == null && properties.getProperty(ConfigurationPrefix.PORT) != null) {
-                ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.PORT, properties.getProperty(ConfigurationPrefix.PORT));
-            }
-
-            if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.TIME) == null && properties.getProperty(ConfigurationPrefix.TIME) != null) {
-                ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.TIME, properties.getProperty(ConfigurationPrefix.TIME));
-            }
-            if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.INDEX) == null && properties.getProperty(ConfigurationPrefix.INDEX) != null) {
-                ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.INDEX, properties.getProperty(ConfigurationPrefix.INDEX));
-            }
+    public void load() throws IOException {
+        //bug here previously
+        if (!loaded) {
+            mergeThePropertiesAndUpdateTheConfigurationRepo();
+            loaded = true;
         }
-        int port = Integer.valueOf(ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.PORT));
-        int time = Integer.valueOf(ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.TIME));
-        String[] indexFiles = getIndexFiles();
-        check(port, indexFiles, time);
-        this.port = port;
-        this.indexFiles = indexFiles;
-        this.time = time;
-        ConfigurationRepository.setIndex_File_Name(indexFiles);
-        loaded = true;
-        return this;
     }
 
     private String[] getIndexFiles() {
@@ -117,6 +94,42 @@ public class ServerConfiguration {
 
     public void reload() {
         checkLoaded();
+        ULTIMATE_PROPERTIES.clear();
+        mergeThePropertiesAndUpdateTheConfigurationRepo();
+    }
+
+
+    private void mergeThePropertiesAndUpdateTheConfigurationRepo() {
+        updateConfiguration();
+        updateConfigurationRepo();
+    }
+
+    private void updateConfiguration() {
+        for (Properties properties : propertiesList) {
+
+            if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.PORT) == null && properties.getProperty(ConfigurationPrefix.PORT) != null) {
+                ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.PORT, properties.getProperty(ConfigurationPrefix.PORT));
+            }
+
+            if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.TIME) == null && properties.getProperty(ConfigurationPrefix.TIME) != null) {
+                ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.TIME, properties.getProperty(ConfigurationPrefix.TIME));
+            }
+            if (ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.INDEX) == null && properties.getProperty(ConfigurationPrefix.INDEX) != null) {
+                ULTIMATE_PROPERTIES.setProperty(ConfigurationPrefix.INDEX, properties.getProperty(ConfigurationPrefix.INDEX));
+            }
+        }
+    }
+
+    private void updateConfigurationRepo() {
+        int port = Integer.valueOf(ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.PORT));
+        int time = Integer.valueOf(ULTIMATE_PROPERTIES.getProperty(ConfigurationPrefix.TIME));
+        String[] indexFiles = getIndexFiles();
+        check(port, indexFiles, time);
+        this.port = port;
+        this.indexFiles = indexFiles;
+        this.time = time;
+        ConfigurationRepository.setIndex_File_Name(indexFiles);
+        ConfigurationRepository.setPeriod(time);
     }
 
 }
