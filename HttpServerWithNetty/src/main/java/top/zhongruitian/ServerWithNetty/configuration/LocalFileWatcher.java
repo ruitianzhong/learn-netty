@@ -17,36 +17,6 @@ public class LocalFileWatcher implements Watcher {
     private ServerConfiguration configuration;
     private Properties properties;
     private long period;
-
-
-    private TimerTask task = new TimerTask() {
-        @Override
-        public void run() {
-            if (watchedFileName != null) {
-                {
-                    try {
-                        setProperties();
-                        if (properties != null && configuration.replace(watchedProperties, properties)) {
-                            configuration.reload();
-                            watchedProperties = properties;
-                            log("Configuration was reloaded successfully");
-                            if (updatePeriodAndCheckIfRestartNeeded()) {
-                                restart();
-                            }
-                        }
-
-                    } catch (FileNotFoundException e) {
-                        log("FileNotFound");
-                        throw new RuntimeException(e);
-                    } catch (IOException e) {
-                        log("throw an IOException");
-                        throw new RuntimeException(e);
-                    }
-
-                }
-            }
-        }
-    };
     private Timer timer;
 
     public LocalFileWatcher(ServerConfiguration configuration, String fileName, Properties fileProperties, long lastModified) {
@@ -65,14 +35,14 @@ public class LocalFileWatcher implements Watcher {
     public void start() {
         period = ConfigurationRepository.getPeriod();
         log("Timer was started");
-        timer.schedule(task, 0, period);
+        timer.schedule(new FileWatchTask(), 0, period);
     }
 
     private void restart() {
-        log("restart the timer: old period ");
         timer.cancel();
         timer = new Timer();
-        timer.schedule(task, 0, period);
+        timer.schedule(new FileWatchTask(), 0, period);
+        log("restart the timer successfully!");
     }
 
     private void setProperties() throws IOException {
@@ -105,5 +75,34 @@ public class LocalFileWatcher implements Watcher {
             return true;
         }
         return false;
+    }
+
+    class FileWatchTask extends TimerTask {
+        @Override
+        public void run() {
+            if (watchedFileName != null) {
+                {
+                    try {
+                        setProperties();
+                        if (properties != null && configuration.replace(watchedProperties, properties)) {
+                            configuration.reload();
+                            watchedProperties = properties;
+                            log("Configuration was reloaded successfully");
+                            if (updatePeriodAndCheckIfRestartNeeded()) {
+                                restart();
+                            }
+                        }
+
+                    } catch (FileNotFoundException e) {
+                        log("FileNotFound");
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
+                        log("throw an IOException");
+                        throw new RuntimeException(e);
+                    }
+
+                }
+            }
+        }
     }
 }
