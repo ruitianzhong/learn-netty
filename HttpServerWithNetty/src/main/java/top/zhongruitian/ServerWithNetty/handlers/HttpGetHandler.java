@@ -15,7 +15,6 @@ import top.zhongruitian.ServerWithNetty.Utils.Server;
 import top.zhongruitian.ServerWithNetty.Utils.URIResult;
 import top.zhongruitian.ServerWithNetty.Utils.Utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
