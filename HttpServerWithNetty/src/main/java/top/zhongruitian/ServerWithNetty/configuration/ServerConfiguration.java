@@ -6,6 +6,7 @@ package top.zhongruitian.ServerWithNetty.configuration;
 import top.zhongruitian.ServerWithNetty.exceptions.DynamicConfigException;
 
 import java.io.IOException;
+import java.lang.module.Configuration;
 import java.util.List;
 import java.util.Properties;
 
@@ -130,6 +131,7 @@ public class ServerConfiguration {
         this.time = time;
         ConfigurationRepository.setIndex_File_Name(indexFiles);
         ConfigurationRepository.setPeriod(time);
+        ConfigurationRepository.setPort(port);
     }
 
 }

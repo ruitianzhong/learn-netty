@@ -1,4 +1,4 @@
-import top.zhongruitian.ServerWithNetty.Utils.ParametersParser;
+import top.zhongruitian.ServerWithNetty.Utils.CommandParametersParser;
 import top.zhongruitian.ServerWithNetty.Utils.Server;
 import top.zhongruitian.ServerWithNetty.configuration.LocalFileWatcher;
 import top.zhongruitian.ServerWithNetty.configuration.ServerConfiguration;
@@ -11,15 +11,15 @@ import java.util.Properties;
 
 public class ServerApplication {
     public static void main(String[] args) throws IOException, URISyntaxException {
-        List<Properties> propertiesList = ParametersParser.parseParameters(args);
+        List<Properties> propertiesList = CommandParametersParser.parseParameters(args);
         ServerConfiguration configuration = new ServerConfiguration(propertiesList);
         configuration.load();
         Server server = new Server(new HttpChannelHandlerInitializer(), configuration);
-        if (ParametersParser.havaFileToWatch()) {
+        if (CommandParametersParser.havaFileToWatch()) {
             LocalFileWatcher watcher = new LocalFileWatcher(configuration,
-                    ParametersParser.fileName,
-                    ParametersParser.fileProperties,
-                    ParametersParser.lastModified);
+                    CommandParametersParser.fileName,
+                    CommandParametersParser.fileProperties,
+                    CommandParametersParser.lastModified);
             watcher.start();//start the watcher when there is configuration file/properties file.
         }
         server.run();

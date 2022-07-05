@@ -12,6 +12,7 @@ package top.zhongruitian.ServerWithNetty.configuration;
 public class ConfigurationRepository {
     private static volatile String[] Index_File_Name;
     private static volatile long period;
+    private static volatile int port;
 
     public static synchronized void setIndex_File_Name(String[] files) {
         if (files.length != 0) {
@@ -34,4 +35,11 @@ public class ConfigurationRepository {
         }
     }
 
+    public static synchronized void setPort(int Port) {
+        port = Port;
+    }
+
+    public static synchronized int getPort() {
+        return port;
+    }
 }

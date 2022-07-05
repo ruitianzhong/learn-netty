@@ -5,13 +5,14 @@ package top.zhongruitian.ServerWithNetty.Utils;
 
 import top.zhongruitian.ServerWithNetty.configuration.ConfigValueConstants;
 import top.zhongruitian.ServerWithNetty.configuration.ConfigurationPrefix;
+import top.zhongruitian.ServerWithNetty.exceptions.CommandSyntaxErrorException;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class ParametersParser {
+public class CommandParametersParser {
     public static String fileName = null;
     public static Properties fileProperties = null;
     public static long lastModified = 0;
@@ -66,13 +67,15 @@ public class ParametersParser {
                 } else {
                     throw new FileNotFoundException("unable to find the file: " + fileName);
                 }
+            } else {
+                throw new CommandSyntaxErrorException("Unknown parameter " + s);
             }
         }
         if (command) {
             propertiesList.add(commandProperties);
         }
         if (file) {
-            System.out.println("watched properties");
+
             propertiesList.add(fileProperties);
         }
         return propertiesList;
