@@ -105,7 +105,7 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
     }
 
     private void logWhenVisited(String msg) {
-        System.out.println(msg);
+        System.out.println(new Date() + "  " + msg);
     }
 
     private void processGet(InputStream inputStream, ChannelHandlerContext ctx, String contentType, FullHttpRequest request) throws IOException {

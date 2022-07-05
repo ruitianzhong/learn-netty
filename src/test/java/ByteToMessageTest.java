@@ -36,7 +36,7 @@ public class ByteToMessageTest {
         }
         ByteBuf temp = byteBuf.duplicate();
         assertTrue(channel.writeInbound(temp));
-        assertTrue(channel.finish());
+        assertTrue(channel.finish());//finish method has side effect!
 
         for (int i = 0; i < 100; i++) {
             Integer integer = channel.readInbound();

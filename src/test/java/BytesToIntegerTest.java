@@ -2,13 +2,13 @@
  * Copyright 2022 ruitianzhong
  */
 
-import top.zhongruitian.BytesToIntegerDecoder.FrameExtractionHandler;
-import top.zhongruitian.BytesToIntegerDecoder.FrameToIntegerHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.Test;
+import top.zhongruitian.BytesToIntegerDecoder.FrameExtractionHandler;
+import top.zhongruitian.BytesToIntegerDecoder.FrameToIntegerHandler;
 
 import static org.junit.Assert.*;
 
@@ -25,8 +25,6 @@ public class BytesToIntegerTest {
     public void BytesToIntegerBasedDirectlyOnInBoundAdapter() {
         bytesToInteger(new FrameExtractionHandler());
     }
-
-
 
     public void bytesToInteger(ChannelInboundHandlerAdapter channelInboundHandlerAdapter) {
         EmbeddedChannel embeddedChannel = new EmbeddedChannel(channelInboundHandlerAdapter);
