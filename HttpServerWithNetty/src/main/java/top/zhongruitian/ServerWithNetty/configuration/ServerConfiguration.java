@@ -5,8 +5,6 @@ package top.zhongruitian.ServerWithNetty.configuration;
 
 import top.zhongruitian.ServerWithNetty.exceptions.DynamicConfigException;
 
-import java.io.IOException;
-import java.lang.module.Configuration;
 import java.util.List;
 import java.util.Properties;
 
@@ -36,7 +34,7 @@ public class ServerConfiguration {
         list.add(DEFAULT_PROPERTIES);
     }
 
-    public void load() throws IOException {
+    public void load() {
         //bug here previously
         if (!loaded) {
             mergeThePropertiesAndUpdateTheConfigurationRepo();

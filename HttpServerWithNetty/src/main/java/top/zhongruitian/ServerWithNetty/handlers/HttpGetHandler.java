@@ -43,9 +43,8 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
         if (msg.method() != HttpMethod.GET) {
             NotGetMethodHandle(ctx, msg);
         } else if ((uri = msg.uri()) != null) {
-            System.out.println(uri);
-            Client client = new Client("localhost",12345,
-                    new HttpClientChannelInitializer(HttpMethod.GET,uri,ctx));
+            Client client = new Client("localhost", 8080,
+                    new HttpClientChannelInitializer(HttpMethod.GET, uri, ctx));
             client.start();
 //            responseIfExist(uri, ctx, msg);
         } else {
