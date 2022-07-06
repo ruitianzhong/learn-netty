@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class URIHelper {
-    public static String Default_HTML_File_Name = "index.html";
-
     public static List<String> parseURIToList(URI uri) {
 
         List<String> list = new ArrayList<>();

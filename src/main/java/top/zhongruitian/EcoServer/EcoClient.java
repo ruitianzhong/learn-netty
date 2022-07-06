@@ -8,7 +8,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
-public class Client {
+
+public class EcoClient {
 
     public static void main(String[] args) {
 
@@ -28,7 +29,7 @@ public class Client {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-        eventExecutors.shutdownGracefully();
+            eventExecutors.shutdownGracefully();
         }
 
     }

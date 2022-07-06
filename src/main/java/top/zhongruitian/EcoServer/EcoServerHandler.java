@@ -8,12 +8,11 @@ import io.netty.util.CharsetUtil;
 public class EcoServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx,Object msg)
-    {ctx.write(msg);
-        ByteBuf byteBuf=(ByteBuf)msg;
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        ctx.write(msg);
+        ByteBuf byteBuf = (ByteBuf) msg;
         System.out.println(byteBuf.toString(CharsetUtil.UTF_8));
         ctx.flush();
-
     }
 
     @Override

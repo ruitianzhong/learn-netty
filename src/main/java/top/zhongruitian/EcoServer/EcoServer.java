@@ -11,38 +11,37 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class EcoServer {
     private int port;
-    public EcoServer(int port)
-    {
-        this.port=port;
+
+    public EcoServer(int port) {
+        this.port = port;
     }
-    public void run()
-    {
-        EventLoopGroup bossGroup=new NioEventLoopGroup();
-        EventLoopGroup workerGroup=new NioEventLoopGroup();
-        try{
-            ServerBootstrap b=new ServerBootstrap();
-            b.group(bossGroup,workerGroup)
+
+    public void run() {
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        try {
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast(new EcoServerHandler());
+                            socketChannel.pipeline().addLast(new EcoServerHandler());
                         }
-                    }).option(ChannelOption.SO_BACKLOG,128)
-                    .childOption(ChannelOption.SO_KEEPALIVE,true);
-            ChannelFuture f=b.bind(port).sync();
+                    }).option(ChannelOption.SO_BACKLOG, 128)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true);
+            ChannelFuture f = b.bind(port).sync();
             f.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-         workerGroup.shutdownGracefully();
-         bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
         }
     }
 
     public static void main(String[] args) {
-        int port=8080;
-
-            new EcoServer(port).run();
+        int port = 8080;
+        new EcoServer(port).run();
     }
 }

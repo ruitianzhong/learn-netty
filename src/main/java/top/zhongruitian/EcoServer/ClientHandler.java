@@ -12,15 +12,12 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         String s;
-        int i = 5;
-        {
-            System.out.println("Please enter the word!");
-            Scanner scanner = new Scanner(System.in);
-            s = scanner.nextLine();
-            ctx.writeAndFlush(Unpooled.copiedBuffer(s, CharsetUtil.UTF_8));
-        }
-    }
+        System.out.println("Please enter the word!");
+        Scanner scanner = new Scanner(System.in);
+        s = scanner.nextLine();
+        ctx.writeAndFlush(Unpooled.copiedBuffer(s, CharsetUtil.UTF_8));
 
+    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -30,6 +27,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         String s;
         Scanner scanner = new Scanner(System.in);
         s = scanner.nextLine();
-        ctx.writeAndFlush(Unpooled.copiedBuffer(s, CharsetUtil.UTF_8));
+        if ("quit".equals(s)) {
+            ctx.close();
+        } else {
+            ctx.writeAndFlush(Unpooled.copiedBuffer(s, CharsetUtil.UTF_8));
+        }
     }
 }
