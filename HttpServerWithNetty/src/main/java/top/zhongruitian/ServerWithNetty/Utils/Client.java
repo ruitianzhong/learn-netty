@@ -29,16 +29,17 @@ public class Client {
     }
 
     public Client(HostAndPort hostAndPort, ChannelHandler... handlers) {
-        if (handlers.length == 0) {
+        if (handlers == null || handlers.length == 0) {//NPE here before
             throw new IllegalArgumentException("Need at least one handler.");
         }
         HostAndPortList hostAndPortList = new DefaultHostAndPortList();
         hostAndPortList.add(hostAndPort);
         this.hostAndPortList = hostAndPortList;
+        this.handlers = handlers;
     }
 
     public Client(HostAndPortList hostAndPortList, ChannelHandler... handlers) {
-        if (handlers.length == 0) {
+        if (handlers == null || handlers.length == 0) {
             throw new IllegalArgumentException("Need at least one handler.");
         }
         this.handlers = handlers;
