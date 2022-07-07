@@ -5,13 +5,14 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import top.zhongruitian.ServerWithNetty.configuration.DefaultHostAndPortList;
+import top.zhongruitian.ServerWithNetty.configuration.HostAndPort;
+import top.zhongruitian.ServerWithNetty.configuration.HostAndPortList;
 
 public class Client {
-    private String host;
     private int count = 0;
-    private int maxTryTimes = 1000000;
+    private int maxReTryTimes = 10;
     private ChannelHandler[] handlers;
-    private int port;
 
     private int ConnectedTimeOutMills = 10000;
 
@@ -21,13 +22,27 @@ public class Client {
 
     private SocketChannel socketChannel;
 
-    public Client(String host, int port, ChannelHandler... handler) {
-        if (handler.length == 0) {
-            throw new IllegalArgumentException("Need at least handler.");
+    private HostAndPortList hostAndPortList;
+
+    public Client(String host, int port, ChannelHandler... handlers) {
+        this(new HostAndPort(host, port), handlers);
+    }
+
+    public Client(HostAndPort hostAndPort, ChannelHandler... handlers) {
+        if (handlers.length == 0) {
+            throw new IllegalArgumentException("Need at least one handler.");
         }
-        this.host = host;
-        this.port = port;
-        this.handlers = handler;
+        HostAndPortList hostAndPortList = new DefaultHostAndPortList();
+        hostAndPortList.add(hostAndPort);
+        this.hostAndPortList = hostAndPortList;
+    }
+
+    public Client(HostAndPortList hostAndPortList, ChannelHandler... handlers) {
+        if (handlers.length == 0) {
+            throw new IllegalArgumentException("Need at least one handler.");
+        }
+        this.handlers = handlers;
+        this.hostAndPortList = hostAndPortList;
     }
 
     public void start() throws InterruptedException {
@@ -40,12 +55,11 @@ public class Client {
                 ch.pipeline().addLast(handlers);
             }
         }).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ConnectedTimeOutMills);
-        channelFuture = bootstrap.connect(host, port);
+        HostAndPort server = hostAndPortList.getServerHostAndPort();
+        channelFuture = bootstrap.connect(server.getHost(), server.getPort());
         channelFuture.addListener((ChannelFutureListener) future -> {
-            if (future.isSuccess()) {
-
-            } else {
-                if (count <= maxTryTimes) {
+            if (!future.isSuccess()) {
+                if (count <= maxReTryTimes) {
                     final EventLoop eventLoop = future.channel().eventLoop();
                     eventLoop.execute(() -> {
                         try {

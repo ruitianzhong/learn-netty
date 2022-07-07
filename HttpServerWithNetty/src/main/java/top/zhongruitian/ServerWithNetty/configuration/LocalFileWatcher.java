@@ -11,7 +11,6 @@ import java.util.TimerTask;
 
 public class LocalFileWatcher implements Watcher {
     private long lastModified;
-
     private Properties watchedProperties;
     private String watchedFileName = null;
     private ServerConfiguration configuration;

@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import top.zhongruitian.ServerWithNetty.Utils.Client;
 import top.zhongruitian.ServerWithNetty.Utils.ServerUtils;
 import top.zhongruitian.ServerWithNetty.Utils.URIResult;
+import top.zhongruitian.ServerWithNetty.configuration.HostAndPortList;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,10 +44,7 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
         if (msg.method() != HttpMethod.GET) {
             NotGetMethodHandle(ctx, msg);
         } else if ((uri = msg.uri()) != null) {
-            Client client = new Client("localhost", 8080,
-                    new HttpClientChannelInitializer(HttpMethod.GET, uri, ctx));
-            client.start();
-//            responseIfExist(uri, ctx, msg);
+            responseIfExist(uri, ctx, msg);
         } else {
             ServerUtils.NotFoundHandle(ctx);
         }
@@ -59,9 +57,14 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
     private void responseIfExist(String uri, ChannelHandlerContext ctx, FullHttpRequest request) {
         try {
             URIResult result = new URIResult(uri);
-            if (result.isSucceed()) {
+            if (result.isMatched()) {
+                HostAndPortList list = result.getHostAndPortList();
+                Client client = new Client(list.getServerHostAndPort(), new HttpClientChannelInitializer(HttpMethod.GET
+                        , uri, ctx));
+                client.start();
+            } else if (result.isSucceed()) {
                 processGet(result.getInputStream(), ctx, result.getContentType(), request);
-                String msg = request.headers().get(HttpHeaderNames.REFERER) + " visited " + uri;
+                String msg = request.headers().get(HttpHeaderNames.FROM) + " visited " + uri;
                 logWhenVisited(msg);
             } else if (result.shouldRedirect()) {
                 ServerUtils.processRedirect(result.getRedirectURI(), ctx);
@@ -75,6 +78,8 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
             ServerUtils.InternalServerHandle(ctx);
         } catch (URISyntaxException ex) {
             System.out.println("URISyntaxException:" + uri);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
     }

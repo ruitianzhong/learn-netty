@@ -1,9 +1,20 @@
 package top.zhongruitian.ServerWithNetty.configuration;
 
 public class HostAndPort {
-    private String host;
     private int port;
-    private boolean isAlive = false;
-    private long id;
-    private long count;
+    private String host;
+
+    public HostAndPort(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
 }

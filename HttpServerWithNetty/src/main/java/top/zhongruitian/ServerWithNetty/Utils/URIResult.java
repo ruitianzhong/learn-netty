@@ -4,6 +4,7 @@
 package top.zhongruitian.ServerWithNetty.Utils;
 
 import top.zhongruitian.ServerWithNetty.configuration.ConfigurationRepository;
+import top.zhongruitian.ServerWithNetty.configuration.HostAndPortList;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +30,8 @@ public class URIResult {
     private boolean NotFound = false;
     private String existing_default_index_file = null;
     private String contentType = null;
+    private boolean matched = false;
+    private HostAndPortList hostAndPortList = null;
 
 
     private File file = null;
@@ -43,24 +46,10 @@ public class URIResult {
     private void check() {
         if (!isChecked) {
             if (filteredPath != null) {
-                file = new File(filteredPath);
-                if (file.exists()) {
-                    if (file.isFile()) {
-                        contentType = getContentType(filteredPath);
-                        if (ContentType.UNKNOWN.equals(contentType)) {
-                            NotFound = true;
-                        } else {
-                            succeed = true;
-                        }
-                    } else {
-                        if (setDefaultIndexFileNameIfExist(filteredPath)) {
-                            redirect = true;
-                        } else {
-                            NotFound = true;
-                        }
-                    }
+                if (matchDirectly() || matchPattern()) {
+                    matched = true;
                 } else {
-                    NotFound = true;
+                    checkIfResourceExistLocally();
                 }
             } else {
                 NotFound = !setDefaultIndexFileNameIfExist("");
@@ -70,8 +59,30 @@ public class URIResult {
         }
     }
 
+    public void checkIfResourceExistLocally() {
+        file = new File(filteredPath);
+        if (file.exists()) {
+            if (file.isFile()) {
+                contentType = initContentType();
+                if (ContentType.UNKNOWN.equals(contentType)) {
+                    NotFound = true;
+                } else {
+                    succeed = true;
+                }
+            } else {
+                if (setDefaultIndexFileNameIfExist(filteredPath)) {
+                    redirect = true;
 
-    private String getContentType(String filteredPath) {
+                } else {
+                    NotFound = true;
+                }
+            }
+        } else {
+            NotFound = true;
+        }
+    }
+
+    private String initContentType() {
         return ContentType.getContentType(resources.get(resources.size() - 1));
     }
 
@@ -123,5 +134,28 @@ public class URIResult {
             }
         }
         return false;
+    }
+
+    public boolean isMatched() {
+        check();
+        return matched;
+    }
+
+    private boolean matchDirectly() {
+        HostAndPortList hostAndPortList = ConfigurationRepository.get(filteredPath);
+        if (hostAndPortList != null && hostAndPortList.size() != 0) {
+            this.hostAndPortList = hostAndPortList;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean matchPattern() {
+        return false;
+    }
+
+    public HostAndPortList getHostAndPortList() {
+        check();
+        return hostAndPortList;
     }
 }

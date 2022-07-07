@@ -7,5 +7,7 @@ public class ConfigurationPrefix {
 
     public static final String EXTENSIONS = "server.extensions";
 
+    public static final String MAPPING = "server.mapping";
+    public static final String RETRY = "server.maxRetryTimes";
 
 }
