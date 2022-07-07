@@ -24,17 +24,18 @@ public class ConfigurationRepository {
 
     static {
         HostAndPort hostAndPort = new HostAndPort("localhost", 8080);
-        String s = "/example";
+        String s = "/index.html";
+        String s1 = "/example/index.html";
         HostAndPortList list = new DefaultHostAndPortList();
         list.add(hostAndPort);
         urlMap.put(s, list);
+        urlMap.put(s1, list);
     }
 
     public static synchronized void setIndex_File_Name(String[] files) {
         if (files.length != 0) {
             Index_File_Name = files;
         }
-
     }
 
     public static synchronized String[] getIndex_File_Name() {
