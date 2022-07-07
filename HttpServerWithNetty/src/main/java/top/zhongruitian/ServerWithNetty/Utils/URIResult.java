@@ -36,11 +36,13 @@ public class URIResult {
 
     private File file = null;
     private boolean succeed = false;
+    private String url;
 
     public URIResult(String url) throws URISyntaxException {
         URI standardURI = new URI(url);
         resources = URIHelper.parseURIToList(standardURI);
         filteredPath = URIHelper.getFilteredPathName(resources);
+        this.url = buildOriginalURL();// for the sake of security? Have little understanding of cyberattack
     }
 
     private void check() {
@@ -142,7 +144,8 @@ public class URIResult {
     }
 
     private boolean matchDirectly() {
-        HostAndPortList hostAndPortList = ConfigurationRepository.get(filteredPath);
+        HostAndPortList hostAndPortList = ConfigurationRepository.get(url);
+
         if (hostAndPortList != null && hostAndPortList.size() != 0) {
             this.hostAndPortList = hostAndPortList;
             return true;
@@ -157,5 +160,17 @@ public class URIResult {
     public HostAndPortList getHostAndPortList() {
         check();
         return hostAndPortList;
+    }
+
+    private String buildOriginalURL() {
+        if (resources.size() == 0) {
+            return "/";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String temp : resources) {
+            sb.append('/');
+            sb.append(temp);
+        }
+        return sb.toString();
     }
 }
