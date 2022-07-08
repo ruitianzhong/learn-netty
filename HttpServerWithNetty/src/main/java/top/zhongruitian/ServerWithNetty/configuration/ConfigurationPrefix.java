@@ -9,5 +9,8 @@ public class ConfigurationPrefix {
 
     public static final String MAPPING = "server.mapping";
     public static final String RETRY = "server.maxRetryTimes";
+    public static final String ERROR_FILE = "server.error_file";
+    public static final String REPOST = "server.repost";
+    public static final String GROUPS = "server.groups";
 
 }

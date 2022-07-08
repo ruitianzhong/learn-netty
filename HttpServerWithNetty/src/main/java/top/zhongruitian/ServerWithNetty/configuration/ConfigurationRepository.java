@@ -3,8 +3,7 @@
  */
 package top.zhongruitian.ServerWithNetty.configuration;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -19,18 +18,10 @@ public class ConfigurationRepository {
     private static volatile int port;
 
     private static ReentrantReadWriteLock RWLockForURLMapping = new ReentrantReadWriteLock();
+    private static ReentrantReadWriteLock RWLockForURLList = new ReentrantReadWriteLock();
 
     private static volatile Map<String, HostAndPortList> urlMap = new HashMap<>();
-
-    static {
-        HostAndPort hostAndPort = new HostAndPort("localhost", 8080);
-        String s = "/index.html";
-        String s1 = "/example/index.html";
-        HostAndPortList list = new DefaultHostAndPortList();
-        list.add(hostAndPort);
-        urlMap.put(s, list);
-        urlMap.put(s1, list);
-    }
+    private static List<String> keyList = new ArrayList<>();
 
     public static synchronized void setIndex_File_Name(String[] files) {
         if (files.length != 0) {
@@ -61,15 +52,41 @@ public class ConfigurationRepository {
     }
 
     public static void put(String url, HostAndPortList hostAndPortList) {
-        RWLockForURLMapping.readLock().lock();
+        RWLockForURLMapping.writeLock().lock();
+        RWLockForURLList.writeLock().lock();
         urlMap.put(url, hostAndPortList);
-        RWLockForURLMapping.readLock().unlock();
+        keyList.add(url);
+        RWLockForURLMapping.writeLock().unlock();
+        RWLockForURLList.writeLock().unlock();
     }
 
     public static HostAndPortList get(String url) {
-        RWLockForURLMapping.writeLock().lock();
+        RWLockForURLMapping.readLock().lock();
         HostAndPortList hostAndPort = urlMap.get(url);
-        RWLockForURLMapping.writeLock().unlock();
+        RWLockForURLMapping.readLock().unlock();
         return hostAndPort;
+    }
+
+    public static List<String> getKeyList() {
+        RWLockForURLList.readLock().lock();
+        List<String> copy = new ArrayList<>();
+        copy.addAll(keyList);
+        RWLockForURLList.readLock().unlock();
+        return copy;
+    }
+
+    public static void setUrlMap(Map<String, HostAndPortList> map) {
+        if (map == null) {
+            return;
+        }
+        RWLockForURLList.writeLock().lock();
+        RWLockForURLMapping.writeLock().lock();
+        urlMap = map;
+        Set<String> keySet = urlMap.keySet();
+        for (String s : keySet) {
+            keyList.add(s);
+        }
+        RWLockForURLMapping.writeLock().unlock();
+        RWLockForURLList.writeLock().unlock();
     }
 }

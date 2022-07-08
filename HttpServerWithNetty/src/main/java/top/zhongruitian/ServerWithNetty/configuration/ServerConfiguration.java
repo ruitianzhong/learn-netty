@@ -1,19 +1,9 @@
-/*
- * Copyright 2022 ruitianzhong
- */
 package top.zhongruitian.ServerWithNetty.configuration;
 
 import top.zhongruitian.ServerWithNetty.exceptions.DynamicConfigException;
 
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
-/**
- * @author ruitianzhong
- * @email zhongruitian2003@qq.com
- * @date 2022/7/3 14:12
- * @description
- */
 public class ServerConfiguration {
     private String[] indexFiles;
     private int port;
@@ -64,11 +54,6 @@ public class ServerConfiguration {
         return port;
     }
 
-    public long getTime() {
-        checkLoaded();
-        return time;
-    }
-
     public boolean replace(Properties oldProperties, Properties newProperties) {
         checkLoaded();
         for (int i = 0; i < propertiesList.size(); i++) {
@@ -99,6 +84,7 @@ public class ServerConfiguration {
 
 
     private void mergeThePropertiesAndUpdateTheConfigurationRepo() {
+        loadRepostConfig();
         updateConfiguration();
         updateConfigurationRepo();
     }
@@ -132,4 +118,76 @@ public class ServerConfiguration {
         ConfigurationRepository.setPort(port);
     }
 
+    private void loadRepostConfig() {
+        for (Properties properties : propertiesList) {
+            String result = properties.getProperty(ConfigurationPrefix.REPOST);
+            if (result != null) {
+                if (!"true".equals(result)) {
+                    Map<String, HostAndPortList> map = new HashMap<>();
+                    ConfigurationRepository.setUrlMap(map);
+                    return;
+                }
+                updateConfigRepo(properties);
+                break;
+            }
+        }
+    }
+
+    private void updateConfigRepo(Properties properties) {
+        String prefix = ConfigurationPrefix.GROUPS;
+        List<HostAndPortList> list = new ArrayList<>();
+        int i = 1;
+        while (true) {
+            String s = properties.getProperty(prefix + "." + i);
+            if (s == null) {
+                break;
+            }
+            list.add(buildHostAndPortList(s));
+            i++;
+        }
+        int j = 1;
+        Map<String, HostAndPortList> map = new HashMap<>();
+        while (j < i) {
+            List<String> urlList = new ArrayList<>();
+            String mapping = properties.getProperty(ConfigurationPrefix.MAPPING + "." + j);
+
+            if (mapping == null) {
+                urlList.add("");
+            } else {
+                fillUrlList(urlList, mapping);
+            }
+            HostAndPortList hostAndPortList = list.get(j - 1);
+            List<String> remove = new ArrayList<>();
+            for (String temp : urlList) {
+                if (temp.length() != 0) {
+                    map.put(temp, hostAndPortList);
+                }
+            }
+            j++;
+        }
+        ConfigurationRepository.setUrlMap(map);
+    }
+
+    private HostAndPortList buildHostAndPortList(String name) {
+        HostAndPortList list = new DefaultHostAndPortList();
+        String[] url = name.split(";");
+        for (String temp : url) {
+            String[] hostAndPortString = temp.split(":");
+            if (hostAndPortString.length != 2) {
+                throw new DynamicConfigException("host and port syntax is wrong");
+            }
+            String host = hostAndPortString[0];
+            int port = Integer.valueOf(hostAndPortString[1]);
+            HostAndPort hostAndPort = new HostAndPort(host, port);
+            list.add(hostAndPort);
+        }
+        return list;
+    }
+
+    private void fillUrlList(List<String> list, String properties) {
+        String[] s = properties.split(";");
+        for (String temp : s) {
+            list.add(temp);
+        }
+    }
 }

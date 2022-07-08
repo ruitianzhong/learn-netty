@@ -144,13 +144,26 @@ public class URIResult {
     }
 
     private boolean matchDirectly() {
-        HostAndPortList hostAndPortList = ConfigurationRepository.get(url);
-
+        tryToMatch();
         if (hostAndPortList != null && hostAndPortList.size() != 0) {
-            this.hostAndPortList = hostAndPortList;
             return true;
         }
         return false;
+    }
+
+    private void tryToMatch() {
+        List<String> keyList = ConfigurationRepository.getKeyList();
+        for (String s : keyList) {
+            if (url.length() < s.length()) {
+                continue;
+            } else {
+                String subString = url.substring(0, s.length());
+                if (s.equals(subString)) {
+                    this.hostAndPortList = ConfigurationRepository.get(s);
+                    return;
+                }
+            }
+        }
     }
 
     private boolean matchPattern() {
