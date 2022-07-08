@@ -6,7 +6,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.util.CharsetUtil;
 
 /**
  * @author ruitianzhong
@@ -35,9 +34,8 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<FullHttpRespo
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse msg) {
         FullHttpResponse temp = msg.copy();
-        System.out.println(temp);
-        System.out.println(temp.content().toString(CharsetUtil.UTF_8));
         this.ctx.writeAndFlush(temp).addListener(ChannelFutureListener.CLOSE);
+        ctx.close();//critical code to ensure availability here , but I don't know why?
     }
 
     @Override
@@ -50,8 +48,10 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<FullHttpRespo
                 request.headers().set(HttpHeaderNames.REFERER, host + ":" + port + url);
             }
         }
-        request.headers().set(HttpHeaderNames.HOST, host + ":" + port);
-        System.out.println(request);
+        String Host = request.headers().get(HttpHeaderNames.HOST);
+        if (Host != null) {
+            request.headers().set("Host", host);
+        }
         ctx.writeAndFlush(request);
     }
 }

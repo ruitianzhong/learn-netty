@@ -8,7 +8,6 @@ public class JudgingHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-
         ByteBuf byteBuf = (ByteBuf) msg;
         while (byteBuf.readableBytes() >= 1) {
             byte b;
