@@ -157,7 +157,6 @@ public class ServerConfiguration {
                 fillUrlList(urlList, mapping);
             }
             HostAndPortList hostAndPortList = list.get(j - 1);
-            List<String> remove = new ArrayList<>();
             for (String temp : urlList) {
                 if (temp.length() != 0) {
                     map.put(temp, hostAndPortList);

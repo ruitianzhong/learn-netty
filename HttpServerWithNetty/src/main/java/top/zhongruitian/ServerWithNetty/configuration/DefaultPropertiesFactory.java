@@ -17,7 +17,7 @@ public class DefaultPropertiesFactory {
         properties.setProperty(ConfigurationPrefix.PORT, ConfigValueConstants.PORT);
         properties.setProperty(ConfigurationPrefix.PERIOD, ConfigValueConstants.PERIOD);
         properties.setProperty(ConfigurationPrefix.INDEX, ConfigValueConstants.INDEX);
-        properties.getProperty(ConfigurationPrefix.REPOST, ConfigValueConstants.Default_Repost);
+        properties.setProperty(ConfigurationPrefix.REPOST, ConfigValueConstants.Default_Repost);
         return properties;
     }
 }

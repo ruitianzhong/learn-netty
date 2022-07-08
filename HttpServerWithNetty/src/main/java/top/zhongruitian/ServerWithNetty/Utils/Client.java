@@ -24,10 +24,6 @@ public class Client {
 
     private HostAndPortList hostAndPortList;
 
-    public Client(String host, int port, ChannelHandler... handlers) {
-        this(new HostAndPort(host, port), handlers);
-    }
-
     public Client(HostAndPort hostAndPort, ChannelHandler... handlers) {
         if (handlers == null || handlers.length == 0) {//NPE here before
             throw new IllegalArgumentException("Need at least one handler.");
@@ -36,14 +32,6 @@ public class Client {
         hostAndPortList.add(hostAndPort);
         this.hostAndPortList = hostAndPortList;
         this.handlers = handlers;
-    }
-
-    public Client(HostAndPortList hostAndPortList, ChannelHandler... handlers) {
-        if (handlers == null || handlers.length == 0) {
-            throw new IllegalArgumentException("Need at least one handler.");
-        }
-        this.handlers = handlers;
-        this.hostAndPortList = hostAndPortList;
     }
 
     public void start() throws InterruptedException {

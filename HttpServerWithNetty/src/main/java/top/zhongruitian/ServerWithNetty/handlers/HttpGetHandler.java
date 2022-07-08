@@ -16,7 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import top.zhongruitian.ServerWithNetty.Utils.Client;
 import top.zhongruitian.ServerWithNetty.Utils.ServerUtils;
 import top.zhongruitian.ServerWithNetty.Utils.URIResult;
+import top.zhongruitian.ServerWithNetty.configuration.HostAndPort;
 import top.zhongruitian.ServerWithNetty.configuration.HostAndPortList;
+import top.zhongruitian.ServerWithNetty.exceptions.BadRequestException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +41,7 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
      * @throws Exception
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws InterruptedException {
+    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
         String uri;
         if (msg.method() != HttpMethod.GET) {
             NotGetMethodHandle(ctx, msg);
@@ -51,7 +53,26 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
     }
 
     private void NotGetMethodHandle(ChannelHandlerContext ctx, FullHttpRequest msg) {
-        ServerUtils.NotFoundHandle(ctx);
+        String url = msg.uri();
+        if (url != null) {
+            try {
+                URIResult result = new URIResult(url);
+                if (result.isMatched()) {
+                    HostAndPortList hostAndPortList = result.getHostAndPortList();
+                    HostAndPort hostAndPort = hostAndPortList.getServerHostAndPort();
+                    Client client = new Client(hostAndPort, new HttpClientChannelInitializer(msg, ctx, hostAndPort.getHost()
+                            , hostAndPort.getPort(), url));
+                    client.start();
+                }
+            } catch (URISyntaxException ex) {
+                throw new BadRequestException("Bad Request:" + url);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            ServerUtils.NotFoundHandle(ctx);
+        }
+
     }
 
     private void responseIfExist(String uri, ChannelHandlerContext ctx, FullHttpRequest request) {
@@ -59,8 +80,9 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<FullHttpRequest>
             URIResult result = new URIResult(uri);
             if (result.isMatched()) {
                 HostAndPortList list = result.getHostAndPortList();
-                Client client = new Client(list.getServerHostAndPort(), new HttpClientChannelInitializer(HttpMethod.GET
-                        , uri, ctx));
+                HostAndPort hostAndPort = list.getServerHostAndPort();
+                Client client = new Client(list.getServerHostAndPort(), new HttpClientChannelInitializer(request, ctx
+                        , hostAndPort.getHost(), hostAndPort.getPort(), uri));
                 client.start();
             } else if (result.isSucceed()) {
                 processGet(result.getInputStream(), ctx, result.getContentType(), request);

@@ -12,9 +12,9 @@ public class HttpServerChannelHandlerInitializer extends ChannelInitializer<Chan
      * @throws Exception
      */
     @Override
-    protected void initChannel(Channel ch) throws Exception {
+    protected void initChannel(Channel ch) {
         ch.pipeline().addLast(new HttpServerCodec());
-        ch.pipeline().addLast(new HttpObjectAggregator(65535));
+        ch.pipeline().addLast(new HttpObjectAggregator(1024 * 1024 * 10));
         ch.pipeline().addLast(new HttpGetHandler());
     }
 }
